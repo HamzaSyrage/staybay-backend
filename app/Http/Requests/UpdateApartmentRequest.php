@@ -22,7 +22,12 @@ class UpdateApartmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            //user id from auth
+            'country_id' => ['required', 'exists:countries'],
+            'city_id' => ['required', 'exists:cities'],
+            'title' => ['required'],
+            'description' => ['required'],
+            'price' => ['required', 'numeric'],
         ];
     }
 }

@@ -22,7 +22,11 @@ class StoreApartmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'country_id' => ['required', 'exists:countries'],
+            'city_id' => ['required', 'exists:cities'],
+            'title' => ['required'],
+            'description' => ['required'],
+            'price' => ['required', 'numeric'],
         ];
     }
 }

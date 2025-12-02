@@ -22,7 +22,10 @@ class UpdatePaymentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'booking_id' => ['required', 'exists:bookings'],
+            'amount' => ['required', 'numeric'],
+            'status' => ['required'],
+            'method' => ['required'],
         ];
     }
 }
