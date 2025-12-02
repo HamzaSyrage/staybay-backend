@@ -17,7 +17,8 @@ class CityFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            "name" => $this->faker->city(),
+            "country_id" => \App\Models\Country::factory(),
         ];
     }
 }

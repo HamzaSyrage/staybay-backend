@@ -14,14 +14,14 @@ return new class extends Migration {
     {
         Schema::create('tags', function (Blueprint $table) {
             $table->id();
-            $table->string('key')->unique();
+            $table->string('name')->unique();
 
             $table->timestamps();
         });
 
-        Schema::create('apartment_tag', function (Blueprint $table) {
+        Schema::create('apartment_tags', function (Blueprint $table) {
             $table->id();
-            $table->string('value');
+            $table->integer('value');
             $table->foreignIdFor(Apartment::class)->constrained()->onDelete('cascade');
             $table->foreignIdFor(Tag::class)->constrained()->onDelete('cascade');
             $table->timestamps();
@@ -34,5 +34,6 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::dropIfExists('tags');
+        Schema::dropIfExists('apartment_tags');
     }
 };

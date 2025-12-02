@@ -15,6 +15,9 @@ return new class extends Migration {
             $table->id();
             $table->foreignIdFor(Booking::class)->constrained()->onDelete('cascade');
             $table->float('amount');
+            $table->enum('status', ['pending', 'completed', 'failed'])->default('pending');
+            $table->enum('method', ['cash', 'visa',])->default('cash');
+            $table->dateTime('payment_date')->nullable();
             $table->timestamps();
         });
     }

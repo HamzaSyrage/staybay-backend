@@ -5,9 +5,9 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Country>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ApartmentImage>
  */
-class CountryFactory extends Factory
+class ApartmentImageFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,7 +17,8 @@ class CountryFactory extends Factory
     public function definition(): array
     {
         return [
-            "name" => $this->faker->country(),
+            'apartment_id' => \App\Models\Apartment::factory(),
+            'path' => $this->faker->imageUrl(640, 480, 'city', true, 'Apartment'),
         ];
     }
 }

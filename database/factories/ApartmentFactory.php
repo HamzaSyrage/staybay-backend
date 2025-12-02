@@ -17,7 +17,13 @@ class ApartmentFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'user_id' => \App\Models\User::factory(),
+            'country_id' => \App\Models\Country::factory(),
+            'city_id' => \App\Models\City::factory(),
+            'title' => $this->faker->sentence(),
+            'description' => $this->faker->paragraph(),
+            'price' => $this->faker->numberBetween(50, 500),
+            'rating' => 0,
         ];
     }
 }
