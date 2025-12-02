@@ -40,6 +40,7 @@ class ApartmentController extends Controller
             'title' => ['required'],
             'description' => ['required'],
             'price' => ['required', 'numeric'],
+
         ]);
         //authorize
         //use Auth user instead of parameter
@@ -96,10 +97,13 @@ class ApartmentController extends Controller
      */
     public function destroy(Apartment $apartment)
     {
-        //autorize
+        //authorize
         $apartment->deleteOrFail();
         return response()->json(
             ['message'=>'apartmert deleted succefully']
         );
     }
+    //-----------
+
 }
+

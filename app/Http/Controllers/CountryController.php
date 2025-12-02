@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreCityRequest;
+use App\Models\City;
 use App\Models\Country;
 use App\Http\Requests\StoreCountryRequest;
 use App\Http\Requests\UpdateCountryRequest;
@@ -14,6 +16,10 @@ class CountryController extends Controller
     public function index()
     {
         //
+        $countries = Country::all();
+        return response()->json([
+            'countries'=>$countries
+        ]);
     }
 
     /**
@@ -27,9 +33,16 @@ class CountryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreCountryRequest $request)
+    public function store(StoreCityRequest $request)
     {
         //
+        $validated = $request->validate([
+            'name' => ['required'],
+        ]);
+        $country = Country::create($validated);
+        return response()->json([
+            'message'=>'created city succefully'
+        ]);
     }
 
     /**
@@ -38,6 +51,9 @@ class CountryController extends Controller
     public function show(Country $country)
     {
         //
+        return response()->json([
+            $country
+        ]);
     }
 
     /**
@@ -54,6 +70,13 @@ class CountryController extends Controller
     public function update(UpdateCountryRequest $request, Country $country)
     {
         //
+        $validated = $request->validate([
+            'name' => ['required'],
+        ]);
+        $country->update($validated);
+        return response()->json([
+            'message'=>'updated city succefully'
+        ]);
     }
 
     /**
@@ -62,5 +85,9 @@ class CountryController extends Controller
     public function destroy(Country $country)
     {
         //
+        $country->deleteOrFail();
+        return response()->json([
+            'message'=>'deleted country succefully'
+        ]);
     }
 }
