@@ -14,6 +14,8 @@ class ApartmentController extends Controller
     public function index()
     {
         //
+        $apartments = Apartment::all();
+        return response()->json([$apartments]);
     }
 
     /**
@@ -22,6 +24,7 @@ class ApartmentController extends Controller
     public function create()
     {
         //
+
     }
 
     /**
@@ -30,6 +33,21 @@ class ApartmentController extends Controller
     public function store(StoreApartmentRequest $request)
     {
         //
+        $validated = $request->validate([
+            'user_id' => ['required', 'exists:users'],
+            'country_id' => ['required', 'exists:countries'],
+            'city_id' => ['required', 'exists:cities'],
+            'title' => ['required'],
+            'description' => ['required'],
+            'price' => ['required', 'numeric'],
+        ]);
+        //authorize
+        //use Auth user instead of parameter
+        $apartment = Apartment::create($validated);
+        return response()->json([
+            'message'=>'appartment created sucessfully',
+            'apartment'=>$apartment
+        ]);
     }
 
     /**
@@ -38,6 +56,7 @@ class ApartmentController extends Controller
     public function show(Apartment $apartment)
     {
         //
+        return response()->json([$apartment]);
     }
 
     /**
@@ -54,6 +73,22 @@ class ApartmentController extends Controller
     public function update(UpdateApartmentRequest $request, Apartment $apartment)
     {
         //
+        $validated = $request->validate([
+            'user_id' => ['required', 'exists:users'],
+            'country_id' => ['required', 'exists:countries'],
+            'city_id' => ['required', 'exists:cities'],
+            'title' => ['required'],
+            'description' => ['required'],
+            'price' => ['required', 'numeric'],
+        ]);
+        //authorize
+        //use Auth user instead of parameter
+        $apartment->update($validated);
+        return response()->json([
+            'message'=>'appartment created sucessfully',
+            'apartment'=>$apartment
+        ]);
+
     }
 
     /**
@@ -61,6 +96,10 @@ class ApartmentController extends Controller
      */
     public function destroy(Apartment $apartment)
     {
-        //
+        //autorize
+        $apartment->deleteOrFail();
+        return response()->json(
+            ['message'=>'apartmert deleted succefully']
+        );
     }
 }
