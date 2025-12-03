@@ -8,7 +8,6 @@ use App\Models\Booking;
 use App\Models\City;
 use App\Models\Country;
 use App\Models\Payment;
-use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -29,47 +28,43 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
+        User::factory()->create([
+            'first_name' => 'Sudo',
+            'last_name' => 'Admin',
+            'phone' => '1234567890',
+            'password' => 'password',
+            'is_admin' => true,
+            'user_verified_at' => now(),
+        ]);
+
         $countries = Country::factory(5)->create();
 
-        $cities = $countries->map(function ($country) {
+        $cities = $countries->flatMap(function ($country) {
             return City::factory(5)->create([
                 'country_id' => $country->id,
             ]);
-        })->flatten();
+        });
 
         $users = User::factory(10)->create();
-
-        $tags = collect([
-            ['name' => 'rooms'],
-            ['name' => 'area'],
-            ['name' => 'floor'],
-            ['name' => 'wifi'],
-            ['name' => 'balcony'],
-            ['name' => 'pool'],
-        ])->map(fn($t) => Tag::create($t));
 
         Apartment::factory(20)->create([
             'user_id' => $users->random()->id,
             'country_id' => $countries->random()->id,
             'city_id' => $cities->random()->id,
-        ])->each(function ($apartment) use ($tags) {
+        ])->each(function ($apartment) use ($users) {
 
             ApartmentImage::factory(10)->create([
                 'apartment_id' => $apartment->id,
             ]);
 
-            $randomTags = $tags->random(rand(2, 4));
-            foreach ($randomTags as $tag) {
-                $apartment->tags()->attach($tag->id, [
-                    'value' => rand(1, 10),
-                ]);
-            }
+            $apartment->favoriteUsers()->attach(
+                $users->random(3)->pluck('id')
+            );
 
             Booking::factory(10)->create([
                 'apartment_id' => $apartment->id,
-                'user_id' => User::all()->random()->id,
+                'user_id' => $users->random()->id,
             ])->each(function ($booking) {
-
                 Payment::factory()->create([
                     'booking_id' => $booking->id,
                 ]);

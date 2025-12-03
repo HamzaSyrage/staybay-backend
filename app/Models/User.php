@@ -60,4 +60,9 @@ class User extends Authenticatable
     {
         return $this->hasManyThrough(Payment::class, Booking::class);
     }
+
+    public function favoriteApartments()
+    {
+        return $this->belongsToMany(Apartment::class, 'favorite_apartments');
+    }
 }

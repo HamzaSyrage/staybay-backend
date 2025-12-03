@@ -38,9 +38,13 @@ class Apartment extends Model
     {
         return $this->hasMany(ApartmentImage::class);
     }
-    public function tags()
-    {
-        return $this->belongsToMany(Tag::class, 'apartment_tags');
-    }
+    // public function tags()
+    // {
+    //     return $this->belongsToMany(Tag::class, 'apartment_tags');
+    // }
 
+    public function favoriteUsers()
+    {
+        return $this->belongsToMany(User::class, 'favorite_apartments');
+    }
 }

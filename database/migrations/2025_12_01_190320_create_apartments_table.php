@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Apartment;
 use App\Models\City;
 use App\Models\Country;
 use App\Models\User;
@@ -22,10 +23,20 @@ return new class extends Migration {
             $table->text('description');
             $table->float('price');
             $table->float('rating')->default(0);
+            $table->integer('rooms');
+            $table->integer('bedrooms');
+            $table->integer('size');
+            $table->boolean('has_pool');
+            $table->boolean('has_wifi');
 
             $table->timestamps();
         });
-
+        Schema::create('favorite_apartments', function (Blueprint $table) {
+            $table->id();
+            $table->foreignIdFor(Apartment::class)->constrained()->onDelete('cascade');
+            $table->foreignIdFor(User::class)->constrained()->onDelete('cascade');
+            $table->timestamps();
+        });
     }
 
     /**
@@ -34,5 +45,6 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::dropIfExists('apartments');
+        Schema::dropIfExists('favorite_apartments');
     }
 };
