@@ -103,7 +103,7 @@ class ApartmentController extends Controller
             ['message'=>'apartmert deleted succefully']
         );
     }
-    //-----------
+    //--------------
 
 }
 
