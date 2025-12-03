@@ -23,6 +23,15 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $avatartsArr = [
+            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQD85Z0N-Y5SambnDNAFTPG7Sh-4j8RCBUbRw&s',
+            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRuudCZIQEUpTylY5lYd7w7vDDxTCKFKRwCOA&s',
+            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRj6x7XMbF1fRZiwlfy01w-PIp4S1CvhctnkQ&s',
+            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzAVv4TzdjQnhO-wzG3U1hdwOevrtvpMzVkQ&s',
+            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvyKtJLt9jH5AkIZfyizCZxw5g3Z4ZO58IEw&s',
+            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQoeTH1r3yQxqi4-DfZeG19lqm9zLawCujCmg&s',
+        ];
+
         return [
             // 'name' => fake()->name(),
             // 'email' => fake()->unique()->safeEmail(),
