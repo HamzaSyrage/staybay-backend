@@ -6,7 +6,7 @@ use App\Http\Requests\LoginUserRequest;
 use App\Http\Requests\LogoutUserRequest;
 use App\Http\Requests\RegisterUserRequest;
 use App\Models\User;
-use http\Env\Response;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -35,12 +35,13 @@ class AuthController extends Controller
         return response()->json([
             'user'=>$user,
             'token'=>$token
+
         ]);
 
     }
     public function logout(LogoutUserRequest $request)
     {
-        $validated = $request->validated();
+//        $validated = $request->validated();
         $request->user()->currentAccessToken()->delete();
         return response()->json(['message' => 'Logged out']);
     }
