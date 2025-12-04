@@ -28,7 +28,7 @@
   </div>
 
   <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-    <form action="/" method="POST" class="space-y-6">
+    <form action="/login" method="POST" class="space-y-6">
         @csrf
       <x-form-field>
             <x-form-label for='phone'>Phone</x-form-label>
