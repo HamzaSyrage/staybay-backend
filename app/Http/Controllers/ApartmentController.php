@@ -2,21 +2,43 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Filters\ApartmentFilters;
 use App\Models\Apartment;
 use App\Http\Requests\StoreApartmentRequest;
 use App\Http\Requests\UpdateApartmentRequest;
+use App\Http\Resources\ApartmentResource;
+use Illuminate\Http\Request;
 
 class ApartmentController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request, ApartmentFilters $filters)
     {
-        //
-        $apartments = Apartment::all();
-        return response()->json([$apartments]);
+        $query = Apartment::query();
+        $query = $filters->apply($query);
+
+        $sortBy = $request->get('sort_by', 'created_at');
+        $sortOrder = $request->get('sort_order', 'desc');
+        $query->orderBy($sortBy, $sortOrder);
+
+        $perPage = $request->get('per_page', 10);
+        $apartments = $query->paginate($perPage);
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Apartments fetched successfully',
+            'pagination' => [
+                'current_page' => $apartments->currentPage(),
+                'per_page' => $apartments->perPage(),
+                'total' => $apartments->total(),
+                'last_page' => $apartments->lastPage(),
+            ],
+            'data' => ApartmentResource::collection($apartments),
+        ]);
     }
+
 
     /**
      * Show the form for creating a new resource.

@@ -47,4 +47,8 @@ class Apartment extends Model
     {
         return $this->belongsToMany(User::class, 'favorite_apartments');
     }
+    public function cover_image()
+    {
+        return $this->images()->first();
+    }
 }
