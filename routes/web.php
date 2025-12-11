@@ -6,4 +6,6 @@ Route::get('/', function () {
     return redirect('/login');
 });
 Route::get('/login',[SessionController::class,'create']);
-
+Route::post('/login',[SessionController::class,'login']);
+//TODO middleWare
+Route::view('/Dashboard','users');
