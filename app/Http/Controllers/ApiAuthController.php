@@ -76,7 +76,7 @@ class ApiAuthController extends Controller
                 'data' => null,
             ])->response()->setStatusCode(401);
         }
-        $request->user()->currentAccessToken()->delete();
+        $request->user()->currentAccessToken()->delete;
         return UserResource::make(null)->additional([
             'status' => 200,
             'message' => 'Logged out',
