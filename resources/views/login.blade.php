@@ -6,7 +6,7 @@
   </div>
 
   <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-    <form action="/login" method="post" class="space-y-6">
+    <form action="{{route('login')}}" method="post" class="space-y-6">
         @csrf
       <x-form-field>
             <x-form-label for='phone'>Phone</x-form-label>
@@ -19,7 +19,7 @@
             <x-form-error name='password'/>
             <x-form-password-input/>
       </x-form-field>
-
+    <x-form-error name="error"/>
     <x-form-button>Sign in</x-form-button>
     </form>
   </div>

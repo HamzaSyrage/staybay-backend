@@ -16,7 +16,7 @@ class AuthController extends Controller
             $request->session()->regenerate();
             return redirect('/dashboard');
         }
-        return redirect()->back()->withErrors(['this errorrrrr']);
+        return redirect()->back()->withErrors(['error'=>'wrong credientals',401]);
     }
     public function loginForm()
     {
