@@ -27,6 +27,7 @@ class User extends Authenticatable
         'id_card',
         'birth_date',
         'password',
+        'user_verified_at'
 
     ];
 

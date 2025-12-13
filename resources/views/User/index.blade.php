@@ -126,11 +126,14 @@
                                             verified
                                         </button>
                                     @else
-                                    <form action="" method="POST" class="inline">
-                                        <button class="px-3 py-2 text-sm text-white bg-green-400 rounded-lg hover:bg-green-600">
-                                            verify
-                                        </button>
-                                    </form>
+                                        <form action="{{ route('users.verify', $user) }}" method="POST" class="inline">
+                                            @csrf
+                                            <button
+                                                class="px-3 py-2 text-sm text-white bg-green-500 rounded-lg hover:bg-green-700"
+                                                onclick="return confirm('Verify this user?')">
+                                                Verify
+                                            </button>
+                                        </form>
                                     @endif
 
                                 </td>
