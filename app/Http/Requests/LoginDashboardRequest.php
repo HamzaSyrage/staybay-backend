@@ -18,4 +18,12 @@ class LoginDashboardRequest extends FormRequest
     {
         return true;
     }
+    public function credentials(): array
+    {
+        return [
+            'phone' => $this->phone,
+            'password' => $this->password,
+            'is_admin' => true,
+        ];
+    }
 }

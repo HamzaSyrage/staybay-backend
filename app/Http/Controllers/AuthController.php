@@ -2,47 +2,31 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\LoginUserRequest;
+use App\Http\Requests\LoginDashboardRequest;
 use App\Http\Requests\LogoutUserRequest;
-use App\Http\Requests\RegisterUserRequest;
-use App\Models\User;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    public function register(RegisterUserRequest $request)
+    public function login(LoginDashboardRequest $request)
     {
-         $validated = $request->validated();
-        /** @var \App\Models\User $user */
-         $user = User::create($validated);
-//         create user api token
-         $token = $user->createToken("api_token")->plainTextToken;
-        return response()->json([
-            'user' => $user,
-            'token' => $token
-        ]);
-    }
-    public function login(LoginUserRequest $request)
-    {
-        $validated = $request->validated();
-        $user = User::where('phone',$validated['phone'])->first();
-        if(!$user || Hash::check($validated['password'],$user->password)){
-            return response()->json([
-                'error'=>'invalid credentials',401
-            ]);
+        //$credentials = $request->validated();
+
+        if(Auth::attempt($request->credentials())){
+            $request->session()->regenerate();
+            return redirect('/dashboard');
         }
-        $token = $user->createToken('api_token')->plainTextToken;
-        return response()->json([
-            'user'=>$user,
-            'token'=>$token
-
-        ]);
-
+        return redirect()->back()->withErrors(['this errorrrrr']);
+    }
+    public function loginForm()
+    {
+        return view('login');
     }
     public function logout(LogoutUserRequest $request)
     {
-//        $validated = $request->validated();
-        $request->user()->currentAccessToken()->delete();
-        return response()->json(['message' => 'Logged out']);
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/login');
     }
 }
