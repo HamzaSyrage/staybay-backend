@@ -1,38 +1,40 @@
-<x-layout>
+<x-layout class="dark:bg-gray-800 dark:border-gray-700">
     <div class="p-4 bg-white block sm:flex items-center justify-between border-b border-gray-200 lg:mt-1.5 dark:bg-gray-800 dark:border-gray-700">
         <div class="w-full mb-1">
             <div class="mb-4">
-                <nav class="flex mb-5" aria-label="Breadcrumb">
-                    <ol class="inline-flex items-center space-x-1 text-sm font-medium md:space-x-2">
+               <x-nav-bar>
                         <li class="inline-flex items-center">
-                            {{-- {{/* route('dashboard')*/ }} --}}
-                            <a href="{{route('login')}}" class="inline-flex items-center text-gray-700 hover:text-primary-600 dark:text-gray-300 dark:hover:text-white">
+                            <x-nav-link route="login" class="inline-flex items-center text-gray-700 hover:text-primary-600 dark:text-gray-300 dark:hover:text-white">
                                 <svg class="w-5 h-5 mr-2.5" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg>
                                 Home
-                            </a>
+                            </x-nav-link>
                         </li>
-
                         <li>
                             <div class="flex items-center">
                                 <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"/></svg>
                                 <a class="ml-1 text-gray-700 md:ml-2">Users</a>
                             </div>
                         </li>
-
                         <li>
                             <div class="flex items-center">
                                 <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"/></svg>
                                 <span class="ml-1 text-gray-400 md:ml-2">List</span>
                             </div>
                         </li>
-                    </ol>
-                </nav>
-
+                   <x-slot:logout>
+                       <x-form route='logout' method="post">
+                           @csrf
+                           <x-form-button class="bg-red-600 hover:bg-red-900">
+                               Logout
+                           </x-form-button>
+                       </x-form>
+                   </x-slot:logout>
+               </x-nav-bar>
                 <h1 class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">All Users</h1>
             </div>
 
             <div class="sm:flex">
-                <form class="lg:pr-3" method="GET">
+                <form class="lg:pr-3" method="GET" action="{{route('dashboard')}}">
                     <label for="users-search" class="sr-only">Search</label>
                     <div class="relative mt-1 lg:w-64 xl:w-96">
                         <input type="text" name="search" id="users-search"
@@ -42,33 +44,9 @@
                                placeholder="Search users...">
                     </div>
                 </form>
-
-                <div class="flex items-center ml-auto space-x-2 sm:space-x-3">
-
-                    <form action="{{route('logout')}}" method="post">
-                        @csrf
-                        <button type="submit" class="inline-flex items-center px-3 py-2 text-sm text-white bg-red-600 rounded-lg hover:bg-red-900">
-                            Logout
-                        </button>
-                    </form>
-
-                </div>
             </div>
         </div>
     </div>
-
-    {{--
-    $table->string('phone')->unique();
-            $table->string('first_name');
-            $table->string('last_name');
-            $table->string('avatar')->nullable();
-            $table->string('id_card');
-            $table->date('birth_date');
-            // $table->string('email')->unique();
-            $table->timestamp('user_verified_at')->nullable();
-            $table->string('password');
-            $table->boolean('is_admin')->default(false);
-    --}}
     <!-- TABLE -->
     <div class="flex flex-col">
         <div class="overflow-x-auto">
