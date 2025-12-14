@@ -21,4 +21,9 @@ class UserController extends Controller
 
         return back()->with('success', 'User verified successfully.');
     }
+    public function destroy(User $user){
+       if($user->deleteOrFail())
+            return back()->with('success', 'User verified successfully.');
+       return back()->with('error', "Couuldn't delete user");
+    }
 }

@@ -117,15 +117,13 @@
                                 </td>
 
                                 <td class="p-4 space-x-2 whitespace-nowrap">
-                                    <button data-modal-target="edit-user-modal"
-                                            data-modal-toggle="edit-user-modal"
-                                            class="px-3 py-2 text-sm text-white bg-primary-700 rounded-lg">
-                                        Edit
+                                    <button class="px-3 py-2 text-sm text-white bg-primary-700 rounded-lg">
+                                        edit Balance
                                     </button>
-                                    {{-- {{ route('users.destroy', $user->id) }} --}}
-                                    <form action="" method="POST" class="inline">
+                                    <form action="{{ route('users.destroy', $user->id) }}" method="POST" class="inline">
                                         @csrf @method('DELETE')
-                                        <button class="px-3 py-2 text-sm text-white bg-red-600 rounded-lg hover:bg-red-800">
+                                        <button class="px-3 py-2 text-sm text-white bg-red-600 rounded-lg hover:bg-red-800"
+                                                onclick="return confirm('delete this user?')">
                                             Delete
                                         </button>
                                     </form>
