@@ -10,6 +10,9 @@ class UserController extends Controller
     {
 
     }
+    public function show(User $user){
+        return view('User.show',['user'=>$user]);
+    }
     public function verify(User $user){
         // Prevent double verification
         if ($user->user_verified_at !== null) {

@@ -1,3 +1,3 @@
-<div class="sm:col-span-4">
+<div {{$attributes->merge(['class'=>"sm:col-span-4"])}}>
     {{ $slot }}
 </div>

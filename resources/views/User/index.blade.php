@@ -117,9 +117,14 @@
                                 </td>
 
                                 <td class="p-4 space-x-2 whitespace-nowrap">
-                                    <button class="px-3 py-2 text-sm text-white bg-primary-700 rounded-lg">
-                                        edit Balance
-                                    </button>
+
+                                    <form action="{{ route('users.show', $user->id) }}" method="get" class="inline">
+                                        @csrf
+                                        <button class="px-3 py-2 text-sm text-black bg-gray-600 hover:bg-gray-500 rounded-lg" type="submit">
+                                            edit
+                                        </button>
+                                    </form>
+
                                     <form action="{{ route('users.destroy', $user->id) }}" method="POST" class="inline">
                                         @csrf @method('DELETE')
                                         <button class="px-3 py-2 text-sm text-white bg-red-600 rounded-lg hover:bg-red-800"
