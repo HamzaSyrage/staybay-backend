@@ -13,7 +13,8 @@ Route::middleware(['auth','admin'])->group(function (){
         Route::get('show',[UserController::Class , 'show'])->name('users.show');
         Route::post('verify', [UserController::class, 'verify'])
             ->name('users.verify');
-        Route::Delete('delete', [UserController::class , 'destroy'])->name('users.destroy');
+        Route::Delete('delete', [UserController::class , 'destroy'])->name('user.destroy');
+        Route::patch('update',[UserController::class,'update'])->name('user.update');
     });
 
 });

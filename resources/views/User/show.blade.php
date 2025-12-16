@@ -1,6 +1,15 @@
 <x-layout>
+{{--    'phone',--}}
+{{--    'first_name',--}}
+{{--    'last_name',--}}
+{{--    'avatar',--}}
+{{--    'id_card',--}}
+{{--    'birth_date',--}}
+{{--    'password',--}}
+{{--    'user_verified_at'--}}
     <div class="min-h-screen flex items-center justify-center bg-gray-100">
-        <form class="w-full max-w-2xl bg-white p-8 rounded-xl shadow-lg" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('user.update', $user->id) }}" class="w-full max-w-2xl bg-white p-8 rounded-xl shadow-lg" method="POST" enctype="multipart/form-data">
+            @method('PATCH')
             @csrf
 
             {{-- ================= Avatar ================= --}}
@@ -130,7 +139,8 @@
                     />
                 </div>
             </div>
-
+            {{-- ================== Errors ======================= --}}
+            <x-form-error name="message" />
             {{-- ================= Submit ================= --}}
             <div class="mt-8 flex justify-end">
                 <button

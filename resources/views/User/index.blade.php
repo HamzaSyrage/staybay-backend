@@ -125,7 +125,7 @@
                                         </button>
                                     </form>
 
-                                    <form action="{{ route('users.destroy', $user->id) }}" method="POST" class="inline">
+                                    <form action="{{ route('user.destroy', $user->id) }}" method="POST" class="inline">
                                         @csrf @method('DELETE')
                                         <button class="px-3 py-2 text-sm text-white bg-red-600 rounded-lg hover:bg-red-800"
                                                 onclick="return confirm('delete this user?')">
