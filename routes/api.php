@@ -2,17 +2,14 @@
 
 use App\Http\Controllers\ApartmentController;
 use App\Http\Controllers\ApiAuthController;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
-
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
 // })->middleware('auth:sanctum');
 
 Route::group(["prefix" => "user"], function () {
     Route::post('/register', [ApiAuthController::class, 'register']);
-    Route::post('/login', [ApiAuthController::class, 'login']);
+    Route::post('/login', [ApiAuthController::class, 'login'])->middleware('verified_user');
     Route::post('/logout', [ApiAuthController::class, 'logout'])->middleware('auth:sanctum');
 });
 
