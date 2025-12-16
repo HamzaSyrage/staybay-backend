@@ -18,6 +18,7 @@
                     <img
                         src="{{ $user->avatar ? asset($user->avatar) : asset('images/default-avatar.png') }}"
                         class="w-32 h-32 rounded-full object-cover border-2 border-gray-300 hover:opacity-80"
+                        alt="avatar"
                     >
                 </label>
 
@@ -60,7 +61,7 @@
                     <x-form-input
                         name="balance"
                         type="number"
-                        step="0.01"
+                        step="1"
                         value="{{ old('balance', $user->balance) }}"
                     />
                 </x-form-field>
@@ -126,6 +127,7 @@
                         <img
                             src="{{ $user->id_card ? asset($user->id_card) : asset('images/id-placeholder.png') }}"
                             class="w-64 h-40 object-cover border-2 border-dashed border-gray-300 rounded-lg hover:opacity-80"
+                            alt="id-card"
                         >
                     </label>
 
