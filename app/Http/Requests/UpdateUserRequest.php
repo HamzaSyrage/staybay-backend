@@ -24,14 +24,13 @@ class UpdateUserRequest extends FormRequest
         }
 
         return [
-            'phone' => ['required'],
             'first_name' => ['required'],
             'last_name' => ['required'],
             'avatar' => ['nullable'],
             'id_card' => ['sometimes'],
             'birth_date' => ['required', 'date'],
             'password' => ['sometimes'],
-            'balance' => ['numeric']
+            'balance' => ['numeric','min:0']
         ];
     }
 

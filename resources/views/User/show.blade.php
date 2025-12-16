@@ -1,12 +1,4 @@
 <x-layout>
-{{--    'phone',--}}
-{{--    'first_name',--}}
-{{--    'last_name',--}}
-{{--    'avatar',--}}
-{{--    'id_card',--}}
-{{--    'birth_date',--}}
-{{--    'password',--}}
-{{--    'user_verified_at'--}}
     <div class="min-h-screen flex items-center justify-center bg-gray-100">
         <form action="{{ route('user.update', $user->id) }}" class="w-full max-w-2xl bg-white p-8 rounded-xl shadow-lg" method="POST" enctype="multipart/form-data">
             @method('PATCH')
@@ -36,25 +28,26 @@
             <div class="grid grid-cols-2 gap-4 mb-6">
                 <x-form-field>
                     <x-form-label>ID</x-form-label>
-                    <x-form-input value="{{ $user->id }}" disabled />
+                    <x-form-input-disabled value="{{ $user->id }}" disabled />
                 </x-form-field>
 
                 <x-form-field>
                     <x-form-label>Admin</x-form-label>
-                    <x-form-input value="{{ $user->is_admin ? 'Yes' : 'No' }}" disabled />
+                    <x-form-input-disabled value="{{ $user->is_admin ? 'Yes' : 'No' }}" disabled />
+                </x-form-field>
+                <x-form-field>
+                <x-form-label>Phone</x-form-label>
+                <x-form-input-disabled
+                    name="phone"
+                    value="{{ old('phone', $user->phone) }}"
+                    placeholder="Phone number"
+                />
                 </x-form-field>
             </div>
 
             {{-- ================= Editable fields ================= --}}
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <x-form-field>
-                    <x-form-label>Phone</x-form-label>
-                    <x-form-input
-                        name="phone"
-                        value="{{ old('phone', $user->phone) }}"
-                        placeholder="Phone number"
-                    />
-                </x-form-field>
+
 
                 <x-form-field>
                     <x-form-label>Balance</x-form-label>
@@ -62,6 +55,7 @@
                         name="balance"
                         type="number"
                         step="1"
+                        min="0"
                         value="{{ old('balance', $user->balance) }}"
                     />
                 </x-form-field>
@@ -142,7 +136,9 @@
                 </div>
             </div>
             {{-- ================== Errors ======================= --}}
-            <x-form-error name="message" />
+            <div class="mt-8 flex justify-center">
+                <x-form-error name="message"/>
+            </div>
             {{-- ================= Submit ================= --}}
             <div class="mt-8 flex justify-end">
                 <button
@@ -156,16 +152,4 @@
     </div>
 
 </x-layout>
-{{--// Avatar--}}
-{{--if ($request->hasFile('avatar')) {--}}
-{{--$user->avatar = $request->file('avatar')->store('avatars', 'public');--}}
-{{--} elseif ($request->filled('avatar_url')) {--}}
-{{--$user->avatar = $request->avatar_url;--}}
-{{--}--}}
 
-{{--// ID Card--}}
-{{--if ($request->hasFile('id_card')) {--}}
-{{--$user->id_card = $request->file('id_card')->store('id_cards', 'public');--}}
-{{--} elseif ($request->filled('id_card_url')) {--}}
-{{--$user->id_card = $request->id_card_url;--}}
-{{--}--}}
