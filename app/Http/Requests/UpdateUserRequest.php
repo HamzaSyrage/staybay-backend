@@ -14,6 +14,9 @@ class UpdateUserRequest extends FormRequest
         if (!$this->filled('id_card')) {
             $this->request->remove('id_card');
         }
+        if (!$this->filled('avatar')) {
+            $this->request->remove('avatar');
+        }
         if (!$this->has('balance') || $this->balance === null) {
             $this->merge([
                 'balance' => 0,
