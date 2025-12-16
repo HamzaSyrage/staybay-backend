@@ -17,15 +17,12 @@ class ApiAuthController extends Controller
 
         if ($request->hasFile('avatar')) {
             $path = $request->file('avatar')->store('avatars', 'public');
-
-            $fullUrl = asset('storage/' . $path);
-            $validated['avatar'] = $fullUrl;
+            $validated['avatar'] = 'storage/' . $path;
         }
 
         if ($request->hasFile('id_card')) {
             $path = $request->file('id_card')->store('id_cards', 'public');
-            $fullUrl = asset('storage/' . $path);
-            $validated['id_card'] = $fullUrl;
+            $validated['id_card'] = 'storage/' . $path;
         }
 
         $validated['password'] = Hash::make($validated['password']);
