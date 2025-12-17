@@ -18,8 +18,8 @@ class ApartmentResource extends JsonResource
         // return parent::toArray($request);
         return [
             'id' => $this->id,
-            'user_id' => $this->user_id,
-            "owner" => new UserResource($this->whenLoaded('owner')),
+            'owner_id' => $this->user_id,
+            "owner" => new UserResource($this->whenLoaded('user')),
             //// i will make them a resource later but for now they are hard coded
             // 'country_id' => $this->country_id,
             // 'city_id' => $this->city_id,
@@ -43,6 +43,7 @@ class ApartmentResource extends JsonResource
             'description' => $this->description,
             'price' => $this->price,
             'rating' => $this->rating,
+            'rating_count' => $this->rating_count(),
             'rooms' => $this->rooms,
             'bedrooms' => $this->bedrooms,
             'size' => $this->size,

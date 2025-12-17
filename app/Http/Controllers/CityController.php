@@ -5,20 +5,19 @@ namespace App\Http\Controllers;
 use App\Models\City;
 use App\Http\Requests\StoreCityRequest;
 use App\Http\Requests\UpdateCityRequest;
-use function Pest\Expectations\json;
+use App\Http\Resources\CityResource;
 
 class CityController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+    //! i think we only need this
     public function index()
     {
         //
         $cities = City::all();
-        return response()->json([
-            'cities'=>$cities
-        ]);
+        return CityResource::collection($cities);
     }
 
     /**
@@ -35,14 +34,14 @@ class CityController extends Controller
     public function store(StoreCityRequest $request)
     {
         //
-        $validated = $request->validate([
-            'name' => ['required'],
-            'country_id' => ['required', 'exists:countries'],
-        ]);
-        $city = City::create($validated);
-        return response()->json([
-            'message'=>'created city succefully'
-        ]);
+        // $validated = $request->validate([
+        //     'name' => ['required'],
+        //     'country_id' => ['required', 'exists:countries'],
+        // ]);
+        // $city = City::create($validated);
+        // return response()->json([
+        //     'message'=>'created city succefully'
+        // ]);
     }
 
     /**
@@ -51,9 +50,9 @@ class CityController extends Controller
     public function show(City $city)
     {
         //
-        return response()->json([
-            $city
-        ]);
+        // return response()->json([
+        //     $city
+        // ]);
     }
 
     /**
@@ -70,14 +69,14 @@ class CityController extends Controller
     public function update(UpdateCityRequest $request, City $city)
     {
         //
-        $validated = $request->validate([
-            'name' => ['required'],
-            'country_id' => ['required', 'exists:countries'],
-        ]);
-        $city->update($validated);
-        return response()->json([
-            'message'=>'edited city succefully'
-        ]);
+        // $validated = $request->validate([
+        //     'name' => ['required'],
+        //     'country_id' => ['required', 'exists:countries'],
+        // ]);
+        // $city->update($validated);
+        // return response()->json([
+        //     'message'=>'edited city succefully'
+        // ]);
     }
 
     /**
@@ -86,9 +85,9 @@ class CityController extends Controller
     public function destroy(City $city)
     {
         //
-        $city->deleteOrFail();
-        return response()->json([
-            'city'=>'city deleted succefully'
-        ]);
+        // $city->deleteOrFail();
+        // return response()->json([
+        //     'city'=>'city deleted succefully'
+        // ]);
     }
 }

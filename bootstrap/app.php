@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\IsApartmentOwner as MiddlewareIsApartmentOwner;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -18,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
            'admin'=>AdminMiddleware::class,
             'verified_user'=>VerifiedUserMiddleware::class,
             'check_user_credentials'=>CheckCredentialsMiddleware::class,
+        'is_apartment_owner' => MiddlewareIsApartmentOwner::class
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

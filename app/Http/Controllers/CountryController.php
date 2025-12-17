@@ -7,6 +7,9 @@ use App\Models\City;
 use App\Models\Country;
 use App\Http\Requests\StoreCountryRequest;
 use App\Http\Requests\UpdateCountryRequest;
+use App\Http\Resources\CityResource;
+use App\Http\Resources\CountryResource;
+use PHPUnit\Framework\Constraint\Count;
 
 class CountryController extends Controller
 {
@@ -18,7 +21,9 @@ class CountryController extends Controller
         //
         $countries = Country::all();
         return response()->json([
-            'countries'=>$countries
+            'status' => 200,
+            'message' => 'countries fetched successfully',
+            'data' => CountryResource::collection($countries)
         ]);
     }
 
@@ -36,13 +41,13 @@ class CountryController extends Controller
     public function store(StoreCityRequest $request)
     {
         //
-        $validated = $request->validate([
-            'name' => ['required'],
-        ]);
-        $country = Country::create($validated);
-        return response()->json([
-            'message'=>'created city succefully'
-        ]);
+        // $validated = $request->validate([
+        //     'name' => ['required'],
+        // ]);
+        // $country = Country::create($validated);
+        // return response()->json([
+        //     'message'=>'created city succefully'
+        // ]);
     }
 
     /**
@@ -50,9 +55,14 @@ class CountryController extends Controller
      */
     public function show(Country $country)
     {
-        //
         return response()->json([
-            $country
+            'status' => 200,
+            'message' => "{$country->name}, Cities fetched successfully",
+            'data' => [
+                'id' => $country->id,
+                'name' => $country->name,
+                'cities' => CityResource::collection($country->cities)
+            ],
         ]);
     }
 
@@ -70,13 +80,13 @@ class CountryController extends Controller
     public function update(UpdateCountryRequest $request, Country $country)
     {
         //
-        $validated = $request->validate([
-            'name' => ['required'],
-        ]);
-        $country->update($validated);
-        return response()->json([
-            'message'=>'updated city succefully'
-        ]);
+        // $validated = $request->validate([
+        //     'name' => ['required'],
+        // ]);
+        // $country->update($validated);
+        // return response()->json([
+        //     'message'=>'updated city succefully'
+        // ]);
     }
 
     /**
@@ -85,9 +95,9 @@ class CountryController extends Controller
     public function destroy(Country $country)
     {
         //
-        $country->deleteOrFail();
-        return response()->json([
-            'message'=>'deleted country succefully'
-        ]);
+        // $country->deleteOrFail();
+        // return response()->json([
+        //     'message'=>'deleted country succefully'
+        // ]);
     }
 }

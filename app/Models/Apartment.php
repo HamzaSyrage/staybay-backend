@@ -17,6 +17,11 @@ class Apartment extends Model
         'description',
         'price',
         'rating',
+        'rooms',
+        'bedrooms',
+        'size',
+        'has_pool',
+        'has_wifi',
     ];
     public function user()
     {
@@ -50,5 +55,11 @@ class Apartment extends Model
     public function cover_image()
     {
         return $this->images()->first();
+    }
+    public function rating_count()
+    {
+        return $this->bookings()
+            ->whereNotNull('rating')
+            ->count();
     }
 }
