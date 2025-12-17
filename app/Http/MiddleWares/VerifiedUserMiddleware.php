@@ -11,7 +11,7 @@ class VerifiedUserMiddleware
     public function handle(Request $request, Closure $next)
     {
         $user = User::where('phone', $request['phone'])->first();
-        if($user->user_verified_at === null)
+        if(isset($user) && is_null($user->user_verified_at))
             abort(403,'user is not verified');
         return $next($request);
     }
