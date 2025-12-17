@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(["prefix" => "user"], function () {
     Route::post('/register', [ApiAuthController::class, 'register']);
-    Route::post('/login', [ApiAuthController::class, 'login'])->middleware('verified_user');
+    Route::post('/login', [ApiAuthController::class, 'login'])->middleware('check_user_credentials','verified_user');
     Route::post('/logout', [ApiAuthController::class, 'logout'])->middleware('auth:sanctum');
 });
 
