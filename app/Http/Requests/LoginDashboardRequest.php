@@ -9,7 +9,7 @@ class LoginDashboardRequest extends FormRequest
     public function rules()
     {
         return [
-            'phone' => ['required|numeric|digits_between:10,11'],
+            'phone' => ['required'],
             'password' => ['required'],
         ];
     }
