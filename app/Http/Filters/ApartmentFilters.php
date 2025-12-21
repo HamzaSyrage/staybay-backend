@@ -11,7 +11,7 @@ class ApartmentFilters
 
     protected $filters = [
         'search',
-        'country_id',
+        'governorate_id',
         'city_id',
         'price_min',
         'price_max',
@@ -51,9 +51,9 @@ class ApartmentFilters
         });
     }
 
-    public function country_id($value)
+    public function governorate_id($value)
     {
-        $this->builder->where('country_id', $value);
+        $this->builder->where('governorate_id', $value);
     }
 
     public function city_id($value)

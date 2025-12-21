@@ -21,17 +21,17 @@ class ApartmentResource extends JsonResource
             'owner_id' => $this->user_id,
             "owner" => new UserResource($this->whenLoaded('user')),
             //// i will make them a resource later but for now they are hard coded
-            // 'country_id' => $this->country_id,
+            // 'governorate_id' => $this->governorate_id,
             // 'city_id' => $this->city_id,
-            // 'country' => [
-            //     'id' => $this->country->id,
-            //     'name' => $this->country->name
+            // 'governorate' => [
+            //     'id' => $this->governorate->id,
+            //     'name' => $this->governorate->name
             // ],
             // 'city' => [
             //     'id' => $this->city->id,
             //     'name' => $this->city->name
             // ],
-            'country' => new CountryResource($this->whenLoaded('country')),
+            'governorate' => new GovernorateResource($this->whenLoaded('governorate')),
             'city' => new CityResource($this->whenLoaded('city')),
             'is_favorite' => $this->when(
                 auth('sanctum')->check(),

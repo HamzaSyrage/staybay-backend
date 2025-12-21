@@ -2,7 +2,7 @@
 
 use App\Models\Apartment;
 use App\Models\City;
-use App\Models\Country;
+use App\Models\Governorate;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -17,7 +17,7 @@ return new class extends Migration {
         Schema::create('apartments', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(User::class)->constrained()->onDelete('cascade');
-            $table->foreignIdFor(Country::class)->constrained()->onDelete('cascade');
+            $table->foreignIdFor(Governorate::class)->constrained()->onDelete('cascade');
             $table->foreignIdFor(City::class)->constrained()->onDelete('cascade');
             $table->string('title');
             $table->text('description');

@@ -57,7 +57,7 @@ class ApartmentController extends Controller
         //
         // $validated = $request->validate([
         //     'user_id' => ['required', 'exists:users'],
-        //     'country_id' => ['required', 'exists:countries'],
+        //     'governorate_id' => ['required', 'exists:governorates'],
         //     'city_id' => ['required', 'exists:cities'],
         //     'title' => ['required'],
         //     'description' => ['required'],
@@ -79,9 +79,9 @@ class ApartmentController extends Controller
         // return response()->json([
         //     'status' => 200,
         //     'message' => 'Apartment created successfully',
-        //     'data' => new ApartmentResource($apartment->load(['user', 'country', 'city'])),
+        //     'data' => new ApartmentResource($apartment->load(['user', 'governorate', 'city'])),
         // ]);
-        return ApartmentResource::make($apartment->load(['user', 'country', 'city']))
+        return ApartmentResource::make($apartment->load(['user', 'governorate', 'city']))
             ->additional([
                 'status' => 201,
                 'message' => 'Apartment created successfully',
@@ -96,7 +96,7 @@ class ApartmentController extends Controller
     public function show(Apartment $apartment)
     {
         //
-        return ApartmentResource::make($apartment->load(['user', 'country', 'city']))
+        return ApartmentResource::make($apartment->load(['user', 'governorate', 'city']))
             ->additional([
                 'status' => 200,
                 'message' => 'Apartment fetched successfully',
@@ -121,7 +121,7 @@ class ApartmentController extends Controller
         //
         // $validated = $request->validate([
         //     'user_id' => ['required', 'exists:users'],
-        //     'country_id' => ['required', 'exists:countries'],
+        //     'governorate_id' => ['required', 'exists:governorates'],
         //     'city_id' => ['required', 'exists:cities'],
         //     'title' => ['required'],
         //     'description' => ['required'],

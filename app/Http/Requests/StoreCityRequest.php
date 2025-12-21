@@ -23,7 +23,7 @@ class StoreCityRequest extends FormRequest
     {
         return [
             'name' => ['required'],
-            'country_id' => ['required', 'exists:countries'],
+            'governorate_id' => ['required', 'exists:governorates'],
         ];
     }
 }

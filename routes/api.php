@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\ApartmentController;
 use App\Http\Controllers\ApiAuthController;
-use App\Http\Controllers\CountryController;
+use App\Http\Controllers\GovernorateController;
 use Illuminate\Support\Facades\Route;
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -26,10 +26,10 @@ Route::group(['prefix' => 'apartments', 'middleware' => 'auth:sanctum'], functio
 
 });
 
-Route::group(['prefix' => 'countries', 'middleware' => 'auth:sanctum'], function () {
-    Route::get('/', [CountryController::class, 'index']);
+Route::group(['prefix' => 'governorates', 'middleware' => 'auth:sanctum'], function () {
+    Route::get('/', [GovernorateController::class, 'index']);
 
-    Route::get('/{country}', [CountryController::class, 'show']);
+    Route::get('/{governorate}', [GovernorateController::class, 'show']);
 });
 
 // Route::group(['prefix' => 'cities', 'middleware' => 'auth:sanctum'], function () {});

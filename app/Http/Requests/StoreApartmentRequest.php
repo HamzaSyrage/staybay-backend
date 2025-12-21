@@ -23,7 +23,7 @@ class StoreApartmentRequest extends FormRequest
     {
         //    $table->id();
         //     $table->foreignIdFor(User::class)->constrained()->onDelete('cascade');
-        //     $table->foreignIdFor(Country::class)->constrained()->onDelete('cascade');
+        //     $table->foreignIdFor(Governorate::class)->constrained()->onDelete('cascade');
         //     $table->foreignIdFor(City::class)->constrained()->onDelete('cascade');
         //     $table->string('title');
         //     $table->text('description');
@@ -36,7 +36,7 @@ class StoreApartmentRequest extends FormRequest
         //     $table->boolean('has_wifi');
 
         return [
-            'country_id' => ['required', 'exists:countries,id'],
+            'governorate_id' => ['required', 'exists:governorates,id'],
             'city_id' => ['required', 'exists:cities,id'],
             'title' => ['required'],
             'description' => ['required'],

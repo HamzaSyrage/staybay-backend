@@ -11,7 +11,7 @@ class Apartment extends Model
     use HasFactory;
     protected $fillable = [
         'user_id',
-        'country_id',
+        'governorate_id',
         'city_id',
         'title',
         'description',
@@ -27,9 +27,9 @@ class Apartment extends Model
     {
         return $this->belongsTo(User::class);
     }
-    public function country()
+    public function governorate()
     {
-        return $this->belongsTo(Country::class);
+        return $this->belongsTo(Governorate::class);
     }
     public function city()
     {

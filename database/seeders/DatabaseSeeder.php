@@ -6,7 +6,7 @@ use App\Models\Apartment;
 use App\Models\ApartmentImage;
 use App\Models\Booking;
 use App\Models\City;
-use App\Models\Country;
+use App\Models\Governorate;
 use App\Models\Payment;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -37,11 +37,11 @@ class DatabaseSeeder extends Seeder
             'user_verified_at' => now(),
         ]);
 
-        $countries = Country::factory(5)->create();
+        $governorates = Governorate::factory(5)->create();
 
-        $cities = $countries->flatMap(function ($country) {
+        $cities = $governorates->flatMap(function ($governorate) {
             return City::factory(5)->create([
-                'country_id' => $country->id,
+                'governorate_id' => $governorate->id,
             ]);
         });
 
@@ -49,7 +49,7 @@ class DatabaseSeeder extends Seeder
 
         Apartment::factory(20)->create([
             'user_id' => $users->random()->id,
-            'country_id' => $countries->random()->id,
+            'governorate_id' => $governorates->random()->id,
             'city_id' => $cities->random()->id,
         ])->each(function ($apartment) use ($users) {
 

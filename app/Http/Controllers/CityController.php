@@ -36,7 +36,7 @@ class CityController extends Controller
         //
         // $validated = $request->validate([
         //     'name' => ['required'],
-        //     'country_id' => ['required', 'exists:countries'],
+        //     'governorate_id' => ['required', 'exists:governorates'],
         // ]);
         // $city = City::create($validated);
         // return response()->json([
@@ -71,7 +71,7 @@ class CityController extends Controller
         //
         // $validated = $request->validate([
         //     'name' => ['required'],
-        //     'country_id' => ['required', 'exists:countries'],
+        //     'governorate_id' => ['required', 'exists:governorates'],
         // ]);
         // $city->update($validated);
         // return response()->json([

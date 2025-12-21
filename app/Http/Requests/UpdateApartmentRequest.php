@@ -23,7 +23,7 @@ class UpdateApartmentRequest extends FormRequest
     {
         return [
             //user id from auth
-            'country_id' => ['required', 'exists:countries'],
+            'governorate_id' => ['required', 'exists:governorates'],
             'city_id' => ['required', 'exists:cities'],
             'title' => ['required'],
             'description' => ['required'],

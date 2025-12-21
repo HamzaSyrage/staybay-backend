@@ -4,14 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCityRequest;
 use App\Models\City;
-use App\Models\Country;
-use App\Http\Requests\StoreCountryRequest;
-use App\Http\Requests\UpdateCountryRequest;
+use App\Models\Governorate;
+use App\Http\Requests\StoreGovernorateRequest;
+use App\Http\Requests\UpdateGovernorateRequest;
 use App\Http\Resources\CityResource;
-use App\Http\Resources\CountryResource;
+use App\Http\Resources\GovernorateResource;
 use PHPUnit\Framework\Constraint\Count;
 
-class CountryController extends Controller
+class GovernorateController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -19,11 +19,11 @@ class CountryController extends Controller
     public function index()
     {
         //
-        $countries = Country::all();
+        $governorates = Governorate::all();
         return response()->json([
             'status' => 200,
-            'message' => 'countries fetched successfully',
-            'data' => CountryResource::collection($countries)
+            'message' => 'governorates fetched successfully',
+            'data' => GovernorateResource::collection($governorates)
         ]);
     }
 
@@ -44,7 +44,7 @@ class CountryController extends Controller
         // $validated = $request->validate([
         //     'name' => ['required'],
         // ]);
-        // $country = Country::create($validated);
+        // $governorate = Governorate::create($validated);
         // return response()->json([
         //     'message'=>'created city succefully'
         // ]);
@@ -53,15 +53,15 @@ class CountryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Country $country)
+    public function show(Governorate $governorate)
     {
         return response()->json([
             'status' => 200,
-            'message' => "{$country->name}, Cities fetched successfully",
+            'message' => "{$governorate->name}, Cities fetched successfully",
             'data' => [
-                'id' => $country->id,
-                'name' => $country->name,
-                'cities' => CityResource::collection($country->cities)
+                'id' => $governorate->id,
+                'name' => $governorate->name,
+                'cities' => CityResource::collection($governorate->cities)
             ],
         ]);
     }
@@ -69,7 +69,7 @@ class CountryController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Country $country)
+    public function edit(Governorate $governorate)
     {
         //
     }
@@ -77,13 +77,13 @@ class CountryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCountryRequest $request, Country $country)
+    public function update(UpdateGovernorateRequest $request, Governorate $governorate)
     {
         //
         // $validated = $request->validate([
         //     'name' => ['required'],
         // ]);
-        // $country->update($validated);
+        // $governorate->update($validated);
         // return response()->json([
         //     'message'=>'updated city succefully'
         // ]);
@@ -92,12 +92,12 @@ class CountryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Country $country)
+    public function destroy(Governorate $governorate)
     {
         //
-        // $country->deleteOrFail();
+        // $governorate->deleteOrFail();
         // return response()->json([
-        //     'message'=>'deleted country succefully'
+        //     'message'=>'deleted governorate succefully'
         // ]);
     }
 }
