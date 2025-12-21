@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ApartmentController;
 use App\Http\Controllers\ApiAuthController;
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\GovernorateController;
 use Illuminate\Support\Facades\Route;
 // Route::get('/user', function (Request $request) {
@@ -33,3 +34,7 @@ Route::group(['prefix' => 'governorates', 'middleware' => 'auth:sanctum'], funct
 });
 
 // Route::group(['prefix' => 'cities', 'middleware' => 'auth:sanctum'], function () {});
+Route::group(['prefix' => 'bookings', 'middleware' => 'auth:sanctum'], function () {
+    Route::post('/', [BookingController::class, 'store']);
+
+});
