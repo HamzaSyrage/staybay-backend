@@ -36,7 +36,7 @@ class StoreApartmentRequest extends FormRequest
         //     $table->boolean('has_wifi');
 
         return [
-            'governorate_id' => ['required', 'exists:governorates,id'],
+            // 'governorate_id' => ['required', 'exists:governorates,id'],
             'city_id' => ['required', 'exists:cities,id'],
             'title' => ['required'],
             'description' => ['required'],

@@ -11,7 +11,7 @@ class Apartment extends Model
     use HasFactory;
     protected $fillable = [
         'user_id',
-        'governorate_id',
+        // 'governorate_id',
         'city_id',
         'title',
         'description',

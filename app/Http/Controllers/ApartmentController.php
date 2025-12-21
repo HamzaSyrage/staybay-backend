@@ -105,7 +105,7 @@ class ApartmentController extends Controller
         return ApartmentResource::make($apartment->load(['user', 'governorate', 'city']))
             ->additional([
                 'status' => 200,
-                'message' => 'Apartment fetched successfully',
+                'message' => 'Apartment fetched successfully.',
             ])
             ->response()
             ->setStatusCode(200);
@@ -141,7 +141,7 @@ class ApartmentController extends Controller
         $apartment->update($validated);
         return ApartmentResource::make($apartment)->additional([
             'status' => 201,
-            'message' => 'Apartment updated successfully',
+            'message' => 'Apartment updated successfully.',
         ])->response()->setStatusCode(201);
     }
 

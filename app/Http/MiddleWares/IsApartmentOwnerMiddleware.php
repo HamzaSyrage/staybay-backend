@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Middleware;
+namespace App\Http\Middlewares;
 
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class IsApartmentOwner
+class IsApartmentOwnerMiddleware
 {
     /**
      * Handle an incoming request.
@@ -18,10 +18,11 @@ class IsApartmentOwner
         $apartment = $request->route('apartment');
 
         if ($apartment && $apartment->user_id !== $request->user()->id) {
-            return response()->json([
-                'status' => 403,
-                'message' => 'You are not authorized to update this apartment.',
-            ], 403);
+            // return response()->json([
+            //     'status' => 403,
+            //     'message' => 'You are not authorized to update this apartment.',
+            // ], 403);
+            abort(403, 'You are not authorized to update this apartment.');
         }
 
         return $next($request);
