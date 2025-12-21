@@ -27,9 +27,21 @@ class Apartment extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    // public function governorate()
+    // {
+    //     return $this->city->governorate();
+    // }
     public function governorate()
     {
-        return $this->belongsTo(Governorate::class);
+        return $this->hasOneThrough(
+            Governorate::class,
+            City::class,
+            'id',
+            'id',
+            'city_id',
+            'governorate_id'
+        );
     }
     public function city()
     {

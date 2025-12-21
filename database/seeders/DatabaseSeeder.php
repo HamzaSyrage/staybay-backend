@@ -180,7 +180,7 @@ class DatabaseSeeder extends Seeder
 
         Apartment::factory(20)->create([
             'user_id' => $users->random()->id,
-            'governorate_id' => $governorates->random()->id,
+            // 'governorate_id' => $governorates->random()->id,
             'city_id' => $cities->random()->id,
         ])->each(function ($apartment) use ($users) {
 

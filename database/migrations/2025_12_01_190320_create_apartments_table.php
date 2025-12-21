@@ -17,7 +17,7 @@ return new class extends Migration {
         Schema::create('apartments', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(User::class)->constrained()->onDelete('cascade');
-            $table->foreignIdFor(Governorate::class)->constrained()->onDelete('cascade');
+            // $table->foreignIdFor(Governorate::class)->constrained()->onDelete('cascade');
             $table->foreignIdFor(City::class)->constrained()->onDelete('cascade');
             $table->string('title');
             $table->text('description');

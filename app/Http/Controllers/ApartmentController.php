@@ -16,7 +16,13 @@ class ApartmentController extends Controller
      */
     public function index(Request $request, ApartmentFilters $filters)
     {
-        $query = Apartment::query();
+        $query = Apartment::with([
+            'user',
+            'city',
+            'governorate',
+            'images',
+        ]);
+
         $query = $filters->apply($query);
 
         $sortBy = $request->get('sort_by', 'created_at');
@@ -83,8 +89,8 @@ class ApartmentController extends Controller
         // ]);
         return ApartmentResource::make($apartment->load(['user', 'governorate', 'city']))
             ->additional([
-                'status' => 201,
-                'message' => 'Apartment created successfully',
+            'status' => 201,
+            'message' => 'Apartment created successfully.',
             ])
             ->response()
             ->setStatusCode(201);
