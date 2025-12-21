@@ -17,7 +17,7 @@ class GovernorateFactory extends Factory
     public function definition(): array
     {
         return [
-            "name" => $this->faker->governorate(),
+            "name" => $this->faker->state(),
         ];
     }
 }

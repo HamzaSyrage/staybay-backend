@@ -9,24 +9,146 @@ use App\Models\City;
 use App\Models\Governorate;
 use App\Models\Payment;
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        // User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        $locations = [
+            'Damascus' => [
+                'Mazzeh',
+                'Mazzeh Villas',
+                'Rukn Al-Din',
+                'Barzeh',
+                'Midan',
+                'Kafr Sousa',
+                'Abu Rummaneh',
+                'Malki',
+                'Shaalan',
+                'Salhieh',
+                'Muhajreen',
+                'Qanawat',
+                'Bab Touma',
+                'Bab Sharqi',
+                'Jobar',
+                'Qaboun',
+                'Tishreen',
+                'Dummar',
+                'Dummar Project',
+                'Mezzeh 86',
+                'Kafar Souseh',
+                'Zahera',
+            ],
+            'Rif Dimashq' => [
+                'Douma',
+                'Darayya',
+                'Qudsaya',
+                'Yabroud',
+                'Al-Tall',
+                'Zabadani',
+                'Madaya',
+                'Harasta',
+                'Saqba',
+                'Kafr Batna',
+                'Jaramana',
+                'Mleiha',
+                'Ein Tarma',
+                'Nabek',
+                'Rankous',
+            ],
+            'Aleppo' => [
+                'Aziziya',
+                'New Aleppo',
+                'Suleimaniya',
+                'Hamdaneya',
+                'Al-Jamiliyah',
+                'Al-Sabil',
+                'Al-Midan',
+                'Al-Shaar',
+                'Seif Al-Dawla',
+                'Hanano',
+                'Ramousah',
+                'Karm Al-Jabal',
+                'Al-Furqan',
+            ],
+            'Homs' => [
+                'Al-Hamra',
+                'Al-Zahra',
+                'Al-Waer',
+                'Inshaat',
+                'Baba Amr',
+                'Karm Al-Zeitoun',
+                'Khaldiyeh',
+                'Al-Arman',
+            ],
+            'Hama' => [
+                'Al-Hader',
+                'Al-Arbaeen',
+                'Al-Hamidiya',
+                'Bab Qibli',
+                'Al-Mourabit',
+                'Salamieh',
+                'Masyaf',
+            ],
+            'Latakia' => [
+                'Al-Raml Al-Janoubi',
+                'Al-Raml Al-Shamali',
+                'Al-Azizieh',
+                'Project 10',
+                'Project 7',
+                'Al-Ziraa',
+                'Jableh',
+                'Qardaha',
+            ],
+            'Tartous' => [
+                'Tartous City',
+                'Baniyas',
+                'Safita',
+                'Sheikh Badr',
+                'Duraykish',
+            ],
+            'Idlib' => [
+                'Idlib City',
+                'Ariha',
+                'Saraqib',
+                'Jisr Al-Shughur',
+                'Maarrat Misrin',
+            ],
+            'Deir ez-Zor' => [
+                'Deir ez-Zor City',
+                'Al-Mayadin',
+                'Al-Bukamal',
+                'Ashara',
+            ],
+            'Raqqa' => [
+                'Raqqa City',
+                'Tal Abyad',
+                'Al-Karamah',
+            ],
+            'Al-Hasakah' => [
+                'Hasakah City',
+                'Qamishli',
+                'Ras Al-Ain',
+                'Malikiyah',
+            ],
+            'Daraa' => [
+                'Daraa City',
+                'Daraa Al-Balad',
+                'Izraa',
+                'Al-Sanamayn',
+                'Busra Al-Sham',
+            ],
+            'Sweida' => [
+                'Sweida City',
+                'Shahba',
+                'Salkhad',
+            ],
+            'Quneitra' => [
+                'Khan Arnabeh',
+                'Majdal Shams',
+            ],
+        ];
 
         User::factory()->create([
             'first_name' => 'Sudo',
@@ -37,13 +159,22 @@ class DatabaseSeeder extends Seeder
             'user_verified_at' => now(),
         ]);
 
-        $governorates = Governorate::factory(5)->create();
+        $governorates = collect();
+        $cities = collect();
 
-        $cities = $governorates->flatMap(function ($governorate) {
-            return City::factory(5)->create([
-                'governorate_id' => $governorate->id,
-            ]);
-        });
+        foreach ($locations as $govName => $cityNames) {
+            $governorate = Governorate::create(['name' => $govName]);
+            $governorates->push($governorate);
+
+            foreach ($cityNames as $cityName) {
+                $cities->push(
+                    City::create([
+                        'name' => $cityName,
+                        'governorate_id' => $governorate->id,
+                    ])
+                );
+            }
+        }
 
         $users = User::factory(10)->create();
 
