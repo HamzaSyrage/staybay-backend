@@ -199,6 +199,57 @@ class ApartmentController extends Controller
         ]);
     }
     //
+    public function my(Request $request)
+    {
+        $apartments = Apartment::with(['user', 'governorate', 'city', 'images'])
+            ->where('user_id', $request->user()->id)
+            ->get();
+
+        return ApartmentResource::collection($apartments)
+            ->additional([
+                'status' => 200,
+                'message' => 'Apartments fetched successfully.',
+            ])
+            ->response()
+            ->setStatusCode(200);
+    }
+    public function favorite(Request $request)
+    {
+        $apartments = $request->user()
+            ->favoriteApartments()
+            ->with(['user', 'governorate', 'city', 'images'])
+            ->get();
+
+        return ApartmentResource::collection($apartments)
+            ->additional([
+                'status' => 200,
+                'message' => 'Apartments fetched successfully.',
+            ])
+            ->response()
+            ->setStatusCode(200);
+    }
+    public function add_favorite(Apartment $apartment, Request $request)
+    {
+        $user = $request->user();
+
+        $user->favoriteApartments()->syncWithoutDetaching($apartment->id);
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Apartment added to favorites successfully.',
+        ]);
+    }
+    public function remove_favorite(Apartment $apartment, Request $request)
+    {
+        $user = $request->user();
+
+        $user->favoriteApartments()->detach($apartment->id);
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Apartment removed from favorites successfully.',
+        ]);
+    }
 
 }
 
