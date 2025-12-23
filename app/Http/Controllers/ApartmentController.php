@@ -77,20 +77,40 @@ class ApartmentController extends Controller
         $apartment = Apartment::create(array_merge($validated, [
             'user_id' => $request->user()->id, //get id from sanctum token
         ]));
-
-
         //authorize
         //use Auth user instead of parameter
+
+
+        if ($request->hasFile('cover_image')) {
+            $path = $request->file('cover_image')->store('apartments', 'public');
+
+            $apartment->images()->create([
+                'path' => 'storage/' . $path,
+            ]);
+        }
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('apartments', 'public');
+
+                $apartment->images()->create([
+                    'path' => 'storage/' . $path,
+                ]);
+            }
+        }
+
 
         // return response()->json([
         //     'status' => 200,
         //     'message' => 'Apartment created successfully',
         //     'data' => new ApartmentResource($apartment->load(['user', 'governorate', 'city'])),
         // ]);
-        return ApartmentResource::make($apartment->load(['user', 'governorate', 'city']))
+        return ApartmentResource::make(
+            $apartment->load(['user', 'governorate', 'city', 'images'])
+        )
             ->additional([
-            'status' => 201,
-            'message' => 'Apartment created successfully.',
+                'status' => 201,
+                'message' => 'Apartment created successfully.',
             ])
             ->response()
             ->setStatusCode(201);
@@ -102,7 +122,9 @@ class ApartmentController extends Controller
     public function show(Apartment $apartment)
     {
         //
-        return ApartmentResource::make($apartment->load(['user', 'governorate', 'city']))
+        return ApartmentResource::make(
+            $apartment->load(['user', 'governorate', 'city', 'images'])
+        )
             ->additional([
                 'status' => 200,
                 'message' => 'Apartment fetched successfully.',
@@ -124,26 +146,44 @@ class ApartmentController extends Controller
      */
     public function update(UpdateApartmentRequest $request, Apartment $apartment)
     {
-        //
-        // $validated = $request->validate([
-        //     'user_id' => ['required', 'exists:users'],
-        //     'governorate_id' => ['required', 'exists:governorates'],
-        //     'city_id' => ['required', 'exists:cities'],
-        //     'title' => ['required'],
-        //     'description' => ['required'],
-        //     'price' => ['required', 'numeric'],
-        // ]);
         $validated = $request->validated();
-
-
-        //authorize
-        //use Auth user instead of parameter
         $apartment->update($validated);
-        return ApartmentResource::make($apartment)->additional([
-            'status' => 201,
-            'message' => 'Apartment updated successfully.',
-        ])->response()->setStatusCode(201);
+
+        if ($request->hasFile('cover_image')) {
+            $path = $request->file('cover_image')->store('apartments', 'public');
+            $cover = $apartment->images()->orderBy('id')->first();
+
+            if ($cover) {
+                $cover->update(['path' => 'storage/' . $path]);
+            } else {
+                $cover = $apartment->images()->create(['path' => 'storage/' . $path]);
+            }
+        }
+
+        $images = $apartment->images()->orderBy('id')->get();
+        // $coverImage = $images->first();
+
+        $images->skip(1)->each(function ($img) {
+            $img->delete();
+        });
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('apartments', 'public');
+                $apartment->images()->create([
+                    'path' => 'storage/' . $path,
+                ]);
+            }
+        }
+
+        return ApartmentResource::make(
+            $apartment->load(['user', 'governorate', 'city', 'images'])
+        )->additional([
+                    'status' => 201,
+                    'message' => 'Apartment updated successfully.',
+                ])->response()->setStatusCode(201);
     }
+
 
     /**
      * Remove the specified resource from storage.
