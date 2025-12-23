@@ -11,7 +11,7 @@ class StoreBookingRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,9 +22,9 @@ class StoreBookingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'apartment_id' => ['required', 'exists:apartments'],
-            'start_date' => ['required', 'date'],
-            'end_date' => ['required', 'date'],
+            'apartment_id' => ['required', 'exists:apartments,id'],
+            'start_date' => ['required', 'date', 'after_or_equal:today'],
+            'end_date' => ['required', 'date', 'after_or_equal:start_date'],
         ];
     }
 }

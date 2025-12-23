@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Booking;
 use App\Http\Requests\StoreBookingRequest;
 use App\Http\Requests\UpdateBookingRequest;
+use App\Http\Resources\BookingResource;
+use App\Models\Apartment;
+use Carbon\Carbon;
 
 class BookingController extends Controller
 {
@@ -32,20 +35,47 @@ class BookingController extends Controller
         //
         //user authorize
         //$user = User::auth()
-        $validated = $request->validate(
-            [
-                'user_id' => ['required', 'exists:users'],
-                'apartment_id' => ['required', 'exists:apartments'],
-                'start_date' => ['required', 'date'],
-                'end_date' => ['required', 'date'],
-            ]
-        );
-        //add user to validated (remove from inline request)
-        $booking = Booking::create($validated);
-        return response()->json([
-            'message'=>'booking done'
+        // $validated = $request->validate(
+        //     [
+        //         'user_id' => ['required', 'exists:users'],
+        //         'apartment_id' => ['required', 'exists:apartments'],
+        //         'start_date' => ['required', 'date'],
+        //         'end_date' => ['required', 'date'],
+        //     ]
+        // );
+        $validated = $request->validated();
+
+        $user = $request->user();
+
+        $apartment = Apartment::findOrFail($validated['apartment_id']);
+
+        $start = $validated['start_date'];
+        $end = $validated['end_date'];
+
+        if (!$apartment->isAvailable(Carbon::parse($start), Carbon::parse($end))) {
+            abort(422, 'The apartment is not available for the selected dates.');
+        }
+        // start - end +1 * apartment price
+        $totalPrice = date_diff(Carbon::parse($start), Carbon::parse($end))->days + 1 * $apartment->price;
+
+
+        $booking = $apartment->bookings()->create([
+            'user_id' => $user->id,
+            'start_date' => $start,
+            'end_date' => $end,
+            'total_price' => $totalPrice,
+            'status' => 'pending',
         ]);
+
+        $booking->refresh();
+
+        return response()->json([
+            'status' => 201,
+            'message' => 'Booking created successfully.',
+            'data' => BookingResource::make($booking->load(['apartment'])),
+        ], 201);
     }
+
 
     /**
      * Display the specified resource.

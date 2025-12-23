@@ -18,7 +18,7 @@ class ApartmentFactory extends Factory
     {
         return [
             'user_id' => \App\Models\User::factory(),
-            'country_id' => \App\Models\Country::factory(),
+            // 'governorate_id' => \App\Models\Governorate::factory(),
             'city_id' => \App\Models\City::factory(),
             'title' => $this->faker->sentence(),
             'description' => $this->faker->paragraph(),

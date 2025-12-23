@@ -25,7 +25,7 @@ class BookingFactory extends Factory
             'total_price' => $this->faker->randomFloat(2, 100, 5000),
             'rating' => null,
             'rated_at' => null,
-            'is_paid' => $this->faker->boolean(),
+            // 'is_paid' => $this->faker->boolean(),
             'paid_at' => null,
         ];
     }

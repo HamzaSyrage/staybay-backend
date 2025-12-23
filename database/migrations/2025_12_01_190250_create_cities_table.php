@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Country;
+use App\Models\Governorate;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,7 +14,7 @@ return new class extends Migration {
         Schema::create('cities', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
-            $table->foreignIdFor(Country::class)->constrained()->onDelete('cascade');
+            $table->foreignIdFor(Governorate::class)->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

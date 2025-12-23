@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -11,20 +12,37 @@ class Apartment extends Model
     use HasFactory;
     protected $fillable = [
         'user_id',
-        'country_id',
+        // 'governorate_id',
         'city_id',
         'title',
         'description',
         'price',
         'rating',
+        'rooms',
+        'bedrooms',
+        'size',
+        'has_pool',
+        'has_wifi',
     ];
     public function user()
     {
         return $this->belongsTo(User::class);
     }
-    public function country()
+
+    // public function governorate()
+    // {
+    //     return $this->city->governorate();
+    // }
+    public function governorate()
     {
-        return $this->belongsTo(Country::class);
+        return $this->hasOneThrough(
+            Governorate::class,
+            City::class,
+            'id',
+            'id',
+            'city_id',
+            'governorate_id'
+        );
     }
     public function city()
     {
@@ -50,5 +68,25 @@ class Apartment extends Model
     public function cover_image()
     {
         return $this->images()->first();
+    }
+    public function rating_count()
+    {
+        return $this->bookings()
+            ->whereNotNull('rating')
+            ->count();
+    }
+
+    public function isAvailable(Carbon $start, Carbon $end): bool
+    {
+        return !$this->bookings()
+            ->where(function ($query) use ($start, $end) {
+                $query->whereBetween('start_date', [$start, $end])
+                    ->orWhereBetween('end_date', [$start, $end])
+                    ->orWhere(function ($q) use ($start, $end) {
+                        $q->where('start_date', '<=', $start)
+                            ->where('end_date', '>=', $end);
+                    });
+            })
+            ->exists();
     }
 }

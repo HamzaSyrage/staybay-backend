@@ -16,7 +16,13 @@ class ApartmentController extends Controller
      */
     public function index(Request $request, ApartmentFilters $filters)
     {
-        $query = Apartment::query();
+        $query = Apartment::with([
+            'user',
+            'city',
+            'governorate',
+            'images',
+        ]);
+
         $query = $filters->apply($query);
 
         $sortBy = $request->get('sort_by', 'created_at');
@@ -55,22 +61,39 @@ class ApartmentController extends Controller
     public function store(StoreApartmentRequest $request)
     {
         //
-        $validated = $request->validate([
-            'user_id' => ['required', 'exists:users'],
-            'country_id' => ['required', 'exists:countries'],
-            'city_id' => ['required', 'exists:cities'],
-            'title' => ['required'],
-            'description' => ['required'],
-            'price' => ['required', 'numeric'],
+        // $validated = $request->validate([
+        //     'user_id' => ['required', 'exists:users'],
+        //     'governorate_id' => ['required', 'exists:governorates'],
+        //     'city_id' => ['required', 'exists:cities'],
+        //     'title' => ['required'],
+        //     'description' => ['required'],
+        //     'price' => ['required', 'numeric'],
+        // ]);
+        $validated = $request->validated();
+        // dd(auth('sanctum')->id());
+        //?$request->user()->id same as auth()->id() but it shows no error in vs code
+        //? i think using auth('sanctum')->id() is better for api and shows no error as well in vs code
+        //? we have alot of options to get the authenticated user id i hate that
+        $apartment = Apartment::create(array_merge($validated, [
+            'user_id' => $request->user()->id, //get id from sanctum token
+        ]));
 
-        ]);
+
         //authorize
         //use Auth user instead of parameter
-        $apartment = Apartment::create($validated);
-        return response()->json([
-            'message'=>'appartment created sucessfully',
-            'apartment'=>$apartment
-        ]);
+
+        // return response()->json([
+        //     'status' => 200,
+        //     'message' => 'Apartment created successfully',
+        //     'data' => new ApartmentResource($apartment->load(['user', 'governorate', 'city'])),
+        // ]);
+        return ApartmentResource::make($apartment->load(['user', 'governorate', 'city']))
+            ->additional([
+            'status' => 201,
+            'message' => 'Apartment created successfully.',
+            ])
+            ->response()
+            ->setStatusCode(201);
     }
 
     /**
@@ -79,7 +102,13 @@ class ApartmentController extends Controller
     public function show(Apartment $apartment)
     {
         //
-        return response()->json([$apartment]);
+        return ApartmentResource::make($apartment->load(['user', 'governorate', 'city']))
+            ->additional([
+                'status' => 200,
+                'message' => 'Apartment fetched successfully.',
+            ])
+            ->response()
+            ->setStatusCode(200);
     }
 
     /**
@@ -96,22 +125,24 @@ class ApartmentController extends Controller
     public function update(UpdateApartmentRequest $request, Apartment $apartment)
     {
         //
-        $validated = $request->validate([
-            'user_id' => ['required', 'exists:users'],
-            'country_id' => ['required', 'exists:countries'],
-            'city_id' => ['required', 'exists:cities'],
-            'title' => ['required'],
-            'description' => ['required'],
-            'price' => ['required', 'numeric'],
-        ]);
+        // $validated = $request->validate([
+        //     'user_id' => ['required', 'exists:users'],
+        //     'governorate_id' => ['required', 'exists:governorates'],
+        //     'city_id' => ['required', 'exists:cities'],
+        //     'title' => ['required'],
+        //     'description' => ['required'],
+        //     'price' => ['required', 'numeric'],
+        // ]);
+        $validated = $request->validated();
+
+
         //authorize
         //use Auth user instead of parameter
         $apartment->update($validated);
-        return response()->json([
-            'message'=>'appartment created sucessfully',
-            'apartment'=>$apartment
-        ]);
-
+        return ApartmentResource::make($apartment)->additional([
+            'status' => 201,
+            'message' => 'Apartment updated successfully.',
+        ])->response()->setStatusCode(201);
     }
 
     /**
@@ -121,11 +152,13 @@ class ApartmentController extends Controller
     {
         //authorize
         $apartment->deleteOrFail();
-        return response()->json(
-            ['message'=>'apartmert deleted succefully']
-        );
+        return response()->json([
+            'status' => 200,
+            'message' => 'Apartment deleted successfully',
+            'data' => null,
+        ]);
     }
-    //--------------
+    //
 
 }
 

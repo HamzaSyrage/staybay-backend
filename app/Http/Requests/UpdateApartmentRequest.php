@@ -11,7 +11,7 @@ class UpdateApartmentRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,11 +23,17 @@ class UpdateApartmentRequest extends FormRequest
     {
         return [
             //user id from auth
-            'country_id' => ['required', 'exists:countries'],
-            'city_id' => ['required', 'exists:cities'],
-            'title' => ['required'],
-            'description' => ['required'],
-            'price' => ['required', 'numeric'],
+            // 'governorate_id' => ['required', 'exists:governorates'],
+            'city_id' => ['exists:cities'],
+            'title' => [''],
+            'description' => [''],
+            'price' => ['numeric', 'min:0'],
+            'rooms' => ['numeric', 'min:0'],
+            'bedrooms' => ['numeric', 'min:0'],
+            'size' => ['numeric', 'min:0'],
+            'has_pool' => ['boolean'],
+            'has_wifi' => ['boolean'],
+
         ];
     }
 }

@@ -22,7 +22,7 @@ return new class extends Migration {
             $table->float('total_price');
             $table->float('rating')->nullable();
             $table->dateTime('rated_at')->nullable();
-            $table->boolean('is_paid')->default(false);
+            // $table->boolean('is_paid')->default(false);
             $table->dateTime('paid_at')->nullable();
             $table->timestamps();
         });

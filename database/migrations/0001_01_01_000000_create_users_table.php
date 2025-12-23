@@ -24,7 +24,7 @@ return new class extends Migration
             $table->timestamp('user_verified_at')->nullable();
             $table->string('password');
             $table->boolean('is_admin')->default(false);
-            $table->float('balance')->default(0.0);
+            $table->float('balance')->default(10000.0);
             $table->rememberToken();
             $table->timestamps();
         });

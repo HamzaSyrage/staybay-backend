@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\ApartmentController;
 use App\Http\Controllers\ApiAuthController;
+use App\Http\Controllers\BookingController;
+use App\Http\Controllers\GovernorateController;
 use Illuminate\Support\Facades\Route;
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -15,6 +17,24 @@ Route::group(["prefix" => "user"], function () {
 
 Route::group(['prefix' => 'apartments', 'middleware' => 'auth:sanctum'], function () {
     Route::get('/', [ApartmentController::class, 'index']);
+    Route::post('/', [ApartmentController::class, 'store']);
+    Route::get('/{apartment}', [ApartmentController::class, 'show']);
+
+    Route::put('/{apartment}', [ApartmentController::class, 'update'])
+        ->middleware('is_apartment_owner');
+    Route::delete('/{apartment}', [ApartmentController::class, 'destroy'])
+        ->middleware('is_apartment_owner');
 
 });
 
+Route::group(['prefix' => 'governorates', 'middleware' => 'auth:sanctum'], function () {
+    Route::get('/', [GovernorateController::class, 'index']);
+
+    Route::get('/{governorate}', [GovernorateController::class, 'show']);
+});
+
+// Route::group(['prefix' => 'cities', 'middleware' => 'auth:sanctum'], function () {});
+Route::group(['prefix' => 'bookings', 'middleware' => 'auth:sanctum'], function () {
+    Route::post('/', [BookingController::class, 'store']);
+
+});
