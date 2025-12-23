@@ -16,12 +16,19 @@ class ApartmentController extends Controller
      */
     public function index(Request $request, ApartmentFilters $filters)
     {
+        $userId = auth('sanctum')->id();
+
         $query = Apartment::with([
             'user',
             'city',
             'governorate',
             'images',
-        ]);
+        ])
+            ->withCount([
+                'favoriteUsers as is_favorite' => function ($q) use ($userId) {
+                    $q->where('user_id', $userId);
+                }
+            ]);
 
         $query = $filters->apply($query);
 
@@ -201,9 +208,17 @@ class ApartmentController extends Controller
     //
     public function my(Request $request)
     {
+        $userId = $request->user()->id;
+
         $apartments = Apartment::with(['user', 'governorate', 'city', 'images'])
-            ->where('user_id', $request->user()->id)
+            ->withCount([
+                'favoriteUsers as is_favorite' => function ($q) use ($userId) {
+                    $q->where('user_id', $userId);
+                }
+            ])
+            ->where('user_id', $userId)
             ->get();
+
 
         return ApartmentResource::collection($apartments)
             ->additional([
@@ -215,11 +230,17 @@ class ApartmentController extends Controller
     }
     public function favorite(Request $request)
     {
+        $user_id = $request->user()->id;
+
         $apartments = $request->user()
             ->favoriteApartments()
             ->with(['user', 'governorate', 'city', 'images'])
+            ->withCount([
+                'favoriteUsers as is_favorite' => function ($q) use ($user_id) {
+                    $q->where('user_id', $user_id);
+                }
+            ])
             ->get();
-
         return ApartmentResource::collection($apartments)
             ->additional([
                 'status' => 200,
