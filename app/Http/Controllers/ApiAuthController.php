@@ -67,17 +67,17 @@ class ApiAuthController extends Controller
     public function logout(LogoutUserRequest $request)
     {
         if (!$request->user()) {
-            return UserResource::make(null)->additional([
+            return response()->json([
                 'status' => 401,
                 'message' => 'Unauthenticated',
                 'data' => null,
-            ])->response()->setStatusCode(401);
+                ]);
         }
-        $request->user()->currentAccessToken()->delete;
-        return UserResource::make(null)->additional([
+        $request->user()->currentAccessToken()->delete();
+        return response()->json([
             'status' => 200,
             'message' => 'Logged out',
-            'data' => null
-        ])->response()->setStatusCode(200);
+            'data' => null,
+        ]);
     }
 }
