@@ -35,16 +35,16 @@ class DashboardController extends Controller
             'users'=>$users
         ]);
     }
-    public function search(){
-        return [
-            'user' => fn () => search(
-                label: 'Search for a user:',
-                placeholder: 'E.g. Taylor Otwell',
-                options: fn ($value) => strlen($value) > 0
-                ? User::whereLike('name', "%{$value}%")->pluck('name', 'id')->all()
-                : []
-            ),
-        ];
-    }
+//    public function search(){
+//        return [
+//            'user' => fn () => search(
+//                label: 'Search for a user:',
+//                placeholder: 'E.g. Taylor Otwell',
+//                options: fn ($value) => strlen($value) > 0
+//                ? User::whereLike('name', "%{$value}%")->pluck('name', 'id')->all()
+//                : []
+//            ),
+//        ];
+//    }
 
 }

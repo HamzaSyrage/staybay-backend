@@ -4,6 +4,7 @@ use App\Http\Controllers\ApartmentController;
 use App\Http\Controllers\ApiAuthController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\GovernorateController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -13,6 +14,7 @@ Route::group(["prefix" => "user"], function () {
     Route::post('/register', [ApiAuthController::class, 'register']);
     Route::post('/login', [ApiAuthController::class, 'login'])->middleware('check_user_credentials','verified_user');
     Route::post('/logout', [ApiAuthController::class, 'logout'])->middleware('auth:sanctum');
+    Route::get('/notifications', [NotificationController::class, 'myNotifications'])->middleware('auth:sanctum');;
 });
 
 Route::group(['prefix' => 'apartments', 'middleware' => 'auth:sanctum'], function () {
@@ -36,5 +38,4 @@ Route::group(['prefix' => 'governorates', 'middleware' => 'auth:sanctum'], funct
 // Route::group(['prefix' => 'cities', 'middleware' => 'auth:sanctum'], function () {});
 Route::group(['prefix' => 'bookings', 'middleware' => 'auth:sanctum'], function () {
     Route::post('/', [BookingController::class, 'store']);
-
 });

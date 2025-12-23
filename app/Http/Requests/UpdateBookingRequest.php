@@ -11,7 +11,8 @@ class UpdateBookingRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        $booking = $this->route('booking');
+        return $booking && $this->user()->id === $booking->user_id;
     }
 
     /**
@@ -22,7 +23,6 @@ class UpdateBookingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'apartment_id' => ['required', 'exists:apartments'],
             'start_date' => ['required', 'date'],
             'end_date' => ['required', 'date'],
         ];

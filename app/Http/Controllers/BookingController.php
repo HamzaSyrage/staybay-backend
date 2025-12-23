@@ -7,7 +7,10 @@ use App\Http\Requests\StoreBookingRequest;
 use App\Http\Requests\UpdateBookingRequest;
 use App\Http\Resources\BookingResource;
 use App\Models\Apartment;
+use App\Models\User;
+use App\Services\NotificationService;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class BookingController extends Controller
 {
@@ -32,17 +35,6 @@ class BookingController extends Controller
      */
     public function store(StoreBookingRequest $request)
     {
-        //
-        //user authorize
-        //$user = User::auth()
-        // $validated = $request->validate(
-        //     [
-        //         'user_id' => ['required', 'exists:users'],
-        //         'apartment_id' => ['required', 'exists:apartments'],
-        //         'start_date' => ['required', 'date'],
-        //         'end_date' => ['required', 'date'],
-        //     ]
-        // );
         $validated = $request->validated();
 
         $user = $request->user();
@@ -56,7 +48,7 @@ class BookingController extends Controller
             abort(422, 'The apartment is not available for the selected dates.');
         }
         // start - end +1 * apartment price
-        $totalPrice = date_diff(Carbon::parse($start), Carbon::parse($end))->days + 1 * $apartment->price;
+        $totalPrice = (date_diff(Carbon::parse($start), Carbon::parse($end))->days + 1) * $apartment->price;
 
 
         $booking = $apartment->bookings()->create([
@@ -66,7 +58,12 @@ class BookingController extends Controller
             'total_price' => $totalPrice,
             'status' => 'pending',
         ]);
-
+        NotificationService::sendNotification($apartment->user,response()->json([
+            'message'=>'booking needs approval',
+            'code'=>'200',
+            'user'=>$user,
+            'apartment'=>$apartment,
+                ]));
         $booking->refresh();
 
         return response()->json([
@@ -98,18 +95,17 @@ class BookingController extends Controller
      */
     public function update(UpdateBookingRequest $request, Booking $booking)
     {
-        //
         //user authorize
-        //$user = User::auth()
-        $validated = $request->validate(
-            [
-                'user_id' => ['required', 'exists:users'],
-                'apartment_id' => ['required', 'exists:apartments'],
-                'start_date' => ['required', 'date'],
-                'end_date' => ['required', 'date'],
-            ]
-        );
-        //add user to validated (remove from inline request)
+        $user = $request->user();
+        $apartment = Apartment::findOrFail($booking->apartment_id);
+        $validated = $request->validated();
+        NotificationService::sendNotification($apartment->user,
+            response()->json([
+            'message'=>'booking needs approval',
+            'code'=>'200',
+            'user'=>$user,
+            'apartment'=>$apartment,
+        ]));
         $booking->update($validated);
         return response()->json([
             'message'=>'edited booking successfully'
@@ -119,9 +115,8 @@ class BookingController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Booking $booking)
+    public function cancel(Booking $booking)
     {
-        //why do i need to destroy booking ?????
-
+        $booking->update(['status'=>'cancelled']);
     }
 }
