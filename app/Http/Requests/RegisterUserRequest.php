@@ -18,9 +18,9 @@ class RegisterUserRequest extends FormRequest
             'first_name' => ['required', 'min:2', 'max:50'],
             'last_name' => ['required', 'min:2', 'max:50'],
 
-            'avatar' => ['nullable', 'image', 'mimes:jpg,jpeg,png'],
+            'avatar' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp'],
 
-            'id_card' => ['required', 'image', 'mimes:jpg,jpeg,png'],
+            'id_card' => ['required', 'image', 'mimes:jpg,jpeg,png,webp'],
 
             'birth_date' => ['required', 'date' ,'before:'.$tenYearsAgo,'after:'.$longTimeAgo],
 
