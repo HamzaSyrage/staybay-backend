@@ -45,5 +45,6 @@ Route::group(['prefix' => 'governorates', 'middleware' => 'auth:sanctum'], funct
 
 // Route::group(['prefix' => 'cities', 'middleware' => 'auth:sanctum'], function () {});
 Route::group(['prefix' => 'bookings', 'middleware' => 'auth:sanctum'], function () {
+    Route::get('/', [BookingController::class, 'index']);
     Route::post('/', [BookingController::class, 'store']);
 });

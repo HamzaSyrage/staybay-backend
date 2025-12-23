@@ -11,15 +11,27 @@ use App\Models\User;
 use App\Services\NotificationService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class BookingController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //Who the fuck cares about this ????
+        //Who the fuck cares about this ???? //? the fucking user that want to get his bookings records
+        $bookings = Booking::with(['apartment.user', 'apartment.city', 'apartment.governorate', 'apartment.images'])
+            ->where('user_id', $request->user()->id)
+            ->get();
+
+        return BookingResource::collection($bookings)
+            ->additional([
+                'status' => 200,
+                'message' => 'Bookings fetched successfully.',
+            ])
+            ->response()
+            ->setStatusCode(200);
     }
 
     /**
