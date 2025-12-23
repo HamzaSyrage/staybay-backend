@@ -67,20 +67,7 @@ class ApartmentController extends Controller
      */
     public function store(StoreApartmentRequest $request)
     {
-        //
-        // $validated = $request->validate([
-        //     'user_id' => ['required', 'exists:users'],
-        //     'governorate_id' => ['required', 'exists:governorates'],
-        //     'city_id' => ['required', 'exists:cities'],
-        //     'title' => ['required'],
-        //     'description' => ['required'],
-        //     'price' => ['required', 'numeric'],
-        // ]);
         $validated = $request->validated();
-        // dd(auth('sanctum')->id());
-        //?$request->user()->id same as auth()->id() but it shows no error in vs code
-        //? i think using auth('sanctum')->id() is better for api and shows no error as well in vs code
-        //? we have alot of options to get the authenticated user id i hate that
         $apartment = Apartment::create(array_merge($validated, [
             'user_id' => $request->user()->id, //get id from sanctum token
         ]));

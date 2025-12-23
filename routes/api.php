@@ -15,6 +15,7 @@ Route::group(["prefix" => "user"], function () {
     Route::post('/login', [ApiAuthController::class, 'login'])->middleware('check_user_credentials','verified_user');
     Route::post('/logout', [ApiAuthController::class, 'logout'])->middleware('auth:sanctum');
     Route::get('/notifications', [NotificationController::class, 'myNotifications'])->middleware('auth:sanctum');;
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->middleware('auth:sanctum');
 });
 
 Route::group(['prefix' => 'apartments', 'middleware' => 'auth:sanctum'], function () {
