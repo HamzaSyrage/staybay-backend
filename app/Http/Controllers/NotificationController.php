@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\NotificationResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -11,8 +12,21 @@ class NotificationController extends Controller
     {
         $user = Auth::user();
         return response()->json([
-            'unread' => $user->unreadNotifications,
-            'read'   => $user->readNotifications,
+            'unread' => NotificationResource::collection($user->unreadNotifications),
+            'read'   => NotificationResource::collection($user->readNotifications),
+        ]);
+    }
+    public function markAsRead($id)
+    {
+        $notification = Auth::user()
+            ->notifications()
+            ->where('id', $id)
+            ->firstOrFail();
+
+        $notification->markAsRead();
+
+        return response()->json([
+            'message' => 'Notification marked as read'
         ]);
     }
 }

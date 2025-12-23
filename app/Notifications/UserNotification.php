@@ -15,7 +15,8 @@ class UserNotification extends Notification
      * Create a new notification instance.
      */
     public function __construct(
-        public string $message
+        public string $message,
+        public array $data = []
     ) {
 
     }
@@ -34,6 +35,7 @@ class UserNotification extends Notification
     {
         return [
             'message' => $this->message,
+            'data' => $this->data,
         ];
     }
 

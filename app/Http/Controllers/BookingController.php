@@ -58,12 +58,15 @@ class BookingController extends Controller
             'total_price' => $totalPrice,
             'status' => 'pending',
         ]);
-        NotificationService::sendNotification($apartment->user,response()->json([
-            'message'=>'booking needs approval',
-            'code'=>'200',
-            'user'=>$user,
-            'apartment'=>$apartment,
-                ]));
+        NotificationService::sendNotification(
+            $apartment->user,
+            'New booking needs your approval',
+            [
+                'booking_id' => $booking->id,
+                'apartment_id' => $apartment->id,
+                'type' => 'booking_approval',
+            ]
+        );
         $booking->refresh();
 
         return response()->json([
