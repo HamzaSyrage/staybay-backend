@@ -3,7 +3,9 @@
 use App\Http\Controllers\ApartmentController;
 use App\Http\Controllers\ApiAuthController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\GovernorateController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 // Route::get('/user', function (Request $request) {
@@ -29,7 +31,17 @@ Route::group(['prefix' => 'apartments', 'middleware' => 'auth:sanctum'], functio
         ->middleware('is_apartment_owner');
 
 });
-
+Route::group(['prefix' => 'chat' , 'middleware' => 'auth:sanctum'], function () {
+    Route::get('/', [ChatController::class, 'index']);
+    Route::post('/send', [ChatController::class, 'send']);
+    Route::get('/{chat}', [ChatController::class, 'show']);
+    Route::delete('/{chat}', [ChatController::class, 'destroy']);
+});
+Route::group(['prefix' => 'message' , 'middleware' => 'auth:sanctum'], function () {
+    Route::patch('/{message}', [MessageController::class, 'edit']);
+    Route::delete('/{message}', [MessageController::class, 'destroy']);
+    Route::patch('/{message}/read', [MessageController::class, 'read']);
+});
 Route::group(['prefix' => 'governorates', 'middleware' => 'auth:sanctum'], function () {
     Route::get('/', [GovernorateController::class, 'index']);
 
