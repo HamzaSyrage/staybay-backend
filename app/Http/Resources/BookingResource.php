@@ -25,6 +25,7 @@ class BookingResource extends JsonResource
             'total_price' => $this->total_price,
             'rating' => $this->rating,
             'rated_at' => $this->rated_at,
+            'is_paid' => isset($this->paid_at),
             'paid_at' => $this->paid_at,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

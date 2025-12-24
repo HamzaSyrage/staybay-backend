@@ -53,7 +53,9 @@ class ApartmentFilters
 
     public function governorate_id($value)
     {
-        $this->builder->where('governorate_id', $value);
+        $this->builder->whereHas('city.governorate', function ($q) use ($value) {
+            $q->where('id', $value);
+        });
     }
 
     public function city_id($value)

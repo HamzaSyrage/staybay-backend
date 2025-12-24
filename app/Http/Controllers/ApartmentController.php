@@ -16,12 +16,19 @@ class ApartmentController extends Controller
      */
     public function index(Request $request, ApartmentFilters $filters)
     {
+        $userId = auth('sanctum')->id();
+
         $query = Apartment::with([
             'user',
             'city',
             'governorate',
             'images',
-        ]);
+        ])
+            ->withCount([
+                'favoriteUsers as is_favorite' => function ($q) use ($userId) {
+                    $q->where('user_id', $userId);
+                }
+            ]);
 
         $query = $filters->apply($query);
 
@@ -64,10 +71,40 @@ class ApartmentController extends Controller
         $apartment = Apartment::create(array_merge($validated, [
             'user_id' => $request->user()->id, //get id from sanctum token
         ]));
-        return ApartmentResource::make($apartment->load(['user', 'governorate', 'city']))
+        //authorize
+        //use Auth user instead of parameter
+
+
+        if ($request->hasFile('cover_image')) {
+            $path = $request->file('cover_image')->store('apartments', 'public');
+
+            $apartment->images()->create([
+                'path' => 'storage/' . $path,
+            ]);
+        }
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('apartments', 'public');
+
+                $apartment->images()->create([
+                    'path' => 'storage/' . $path,
+                ]);
+            }
+        }
+
+
+        // return response()->json([
+        //     'status' => 200,
+        //     'message' => 'Apartment created successfully',
+        //     'data' => new ApartmentResource($apartment->load(['user', 'governorate', 'city'])),
+        // ]);
+        return ApartmentResource::make(
+            $apartment->load(['user', 'governorate', 'city', 'images'])
+        )
             ->additional([
-            'status' => 201,
-            'message' => 'Apartment created successfully.',
+                'status' => 201,
+                'message' => 'Apartment created successfully.',
             ])
             ->response()
             ->setStatusCode(201);
@@ -79,7 +116,9 @@ class ApartmentController extends Controller
     public function show(Apartment $apartment)
     {
         //
-        return ApartmentResource::make($apartment->load(['user', 'governorate', 'city']))
+        return ApartmentResource::make(
+            $apartment->load(['user', 'governorate', 'city', 'images'])
+        )
             ->additional([
                 'status' => 200,
                 'message' => 'Apartment fetched successfully.',
@@ -101,26 +140,44 @@ class ApartmentController extends Controller
      */
     public function update(UpdateApartmentRequest $request, Apartment $apartment)
     {
-        //
-        // $validated = $request->validate([
-        //     'user_id' => ['required', 'exists:users'],
-        //     'governorate_id' => ['required', 'exists:governorates'],
-        //     'city_id' => ['required', 'exists:cities'],
-        //     'title' => ['required'],
-        //     'description' => ['required'],
-        //     'price' => ['required', 'numeric'],
-        // ]);
         $validated = $request->validated();
-
-
-        //authorize
-        //use Auth user instead of parameter
         $apartment->update($validated);
-        return ApartmentResource::make($apartment)->additional([
-            'status' => 201,
-            'message' => 'Apartment updated successfully.',
-        ])->response()->setStatusCode(201);
+
+        if ($request->hasFile('cover_image')) {
+            $path = $request->file('cover_image')->store('apartments', 'public');
+            $cover = $apartment->images()->orderBy('id')->first();
+
+            if ($cover) {
+                $cover->update(['path' => 'storage/' . $path]);
+            } else {
+                $cover = $apartment->images()->create(['path' => 'storage/' . $path]);
+            }
+        }
+
+        $images = $apartment->images()->orderBy('id')->get();
+        // $coverImage = $images->first();
+
+        $images->skip(1)->each(function ($img) {
+            $img->delete();
+        });
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('apartments', 'public');
+                $apartment->images()->create([
+                    'path' => 'storage/' . $path,
+                ]);
+            }
+        }
+
+        return ApartmentResource::make(
+            $apartment->load(['user', 'governorate', 'city', 'images'])
+        )->additional([
+                    'status' => 201,
+                    'message' => 'Apartment updated successfully.',
+                ])->response()->setStatusCode(201);
     }
+
 
     /**
      * Remove the specified resource from storage.
@@ -136,6 +193,71 @@ class ApartmentController extends Controller
         ]);
     }
     //
+    public function my(Request $request)
+    {
+        $userId = $request->user()->id;
+
+        $apartments = Apartment::with(['user', 'governorate', 'city', 'images'])
+            ->withCount([
+                'favoriteUsers as is_favorite' => function ($q) use ($userId) {
+                    $q->where('user_id', $userId);
+                }
+            ])
+            ->where('user_id', $userId)
+            ->get();
+
+
+        return ApartmentResource::collection($apartments)
+            ->additional([
+                'status' => 200,
+                'message' => 'Apartments fetched successfully.',
+            ])
+            ->response()
+            ->setStatusCode(200);
+    }
+    public function favorite(Request $request)
+    {
+        $user_id = $request->user()->id;
+
+        $apartments = $request->user()
+            ->favoriteApartments()
+            ->with(['user', 'governorate', 'city', 'images'])
+            ->withCount([
+                'favoriteUsers as is_favorite' => function ($q) use ($user_id) {
+                    $q->where('user_id', $user_id);
+                }
+            ])
+            ->get();
+        return ApartmentResource::collection($apartments)
+            ->additional([
+                'status' => 200,
+                'message' => 'Apartments fetched successfully.',
+            ])
+            ->response()
+            ->setStatusCode(200);
+    }
+    public function add_favorite(Apartment $apartment, Request $request)
+    {
+        $user = $request->user();
+
+        $user->favoriteApartments()->syncWithoutDetaching($apartment->id);
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Apartment added to favorites successfully.',
+        ]);
+    }
+    public function remove_favorite(Apartment $apartment, Request $request)
+    {
+        $user = $request->user();
+
+        $user->favoriteApartments()->detach($apartment->id);
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Apartment removed from favorites successfully.',
+        ]);
+    }
 
 }
 

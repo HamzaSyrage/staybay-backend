@@ -33,12 +33,13 @@ class ApartmentResource extends JsonResource
             // ],
             'governorate' => new GovernorateResource($this->whenLoaded('governorate')),
             'city' => new CityResource($this->whenLoaded('city')),
-            'is_favorite' => $this->when(
-                auth('sanctum')->check(),
-                fn() => $this->favoriteUsers()
-                    ->where('user_id', auth('sanctum')->id())
-                    ->exists()
-            ),
+            // 'is_favorite' => $this->when(
+            //     auth('sanctum')->check(),
+            //     fn() => $this->favoriteUsers()
+            //         ->where('user_id', auth('sanctum')->id())
+            //         ->exists()
+            // ),
+            'is_favorite' => $this->when(auth('sanctum')->check(), $this->is_favorite > 0),
             'title' => $this->title,
             'description' => $this->description,
             'price' => $this->price,

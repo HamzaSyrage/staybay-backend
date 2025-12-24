@@ -23,12 +23,20 @@ Route::group(["prefix" => "user"], function () {
 Route::group(['prefix' => 'apartments', 'middleware' => 'auth:sanctum'], function () {
     Route::get('/', [ApartmentController::class, 'index']);
     Route::post('/', [ApartmentController::class, 'store']);
+    Route::get('/my', [ApartmentController::class, 'my']);
+
+    Route::get('/favorite', [ApartmentController::class, 'favorite']);
+    Route::post('/favorite/add/{apartment}', [ApartmentController::class, 'add_favorite']);
+    Route::delete('/favorite/remove/{apartment}', [ApartmentController::class, 'remove_favorite']);
+
+
     Route::get('/{apartment}', [ApartmentController::class, 'show']);
 
     Route::put('/{apartment}', [ApartmentController::class, 'update'])
         ->middleware('is_apartment_owner');
     Route::delete('/{apartment}', [ApartmentController::class, 'destroy'])
         ->middleware('is_apartment_owner');
+
 
 });
 Route::group(['prefix' => 'chat' , 'middleware' => 'auth:sanctum'], function () {
@@ -50,5 +58,6 @@ Route::group(['prefix' => 'governorates', 'middleware' => 'auth:sanctum'], funct
 
 // Route::group(['prefix' => 'cities', 'middleware' => 'auth:sanctum'], function () {});
 Route::group(['prefix' => 'bookings', 'middleware' => 'auth:sanctum'], function () {
+    Route::get('/', [BookingController::class, 'index']);
     Route::post('/', [BookingController::class, 'store']);
 });
