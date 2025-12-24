@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\SendMessageRequest;
 use App\Models\Message;
+use App\Models\User;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use App\Models\Chat;
 
@@ -11,7 +13,7 @@ class ChatController extends Controller
 {
     /**
      * @param SendMessageRequest $request
-     * @return void
+     * @return \Illuminate\Http\JsonResponse
      * send message or open a new chat
      */
     public function send(SendMessageRequest $request)
@@ -37,6 +39,15 @@ class ChatController extends Controller
             'body' => $message,
             'sender_id' => $sender->id,
         ]);
+        $receiver = User::find($receiver_id);
+        NotificationService::sendNotification($sender, "user {$receiver->first_name} {$receiver->last_name} sent a message}",[
+            "sender_id"=>$sender->id,
+        ]);
+        return response()->json([
+            'data' => $message,
+            'message'=>'Message sent',
+            'code'=>200
+        ]);
     }
 
     /**
@@ -61,12 +72,17 @@ class ChatController extends Controller
     /**
      * delete all messages with the chat
      * @param Chat $chat
-     * @return void
+     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(Chat $chat){
         $user_id = auth()->user()->id;
         abort_if( $user_id !== $chat->receiver_id && $user_id !==$chat->sender_id, 403 ,"Unauthorized action.");
         $chat->delete();
+        return response()->json([
+            'data' => $chat,
+            'message'=>'Message deleted',
+            'code'=>200
+        ]);
     }
 
 }

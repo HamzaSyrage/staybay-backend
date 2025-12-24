@@ -15,7 +15,7 @@ class EditMessageRequest extends FormRequest
 
     public function authorize(): bool
     {
-        if(request()->user() === $this->request->message->sender){
+        if(request()->user()->id === $this->route('message')->sender_id){
             return true;
         }
         return false;
