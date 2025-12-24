@@ -61,7 +61,7 @@ Content-Type: application/x-www-form-urlencoded
 phone=1234567890&password=password
 
 > {%
-    client.global.set("token", response.body.token);
+    client.global.set("token", response.body.data.token);
 %}
 
 ###
