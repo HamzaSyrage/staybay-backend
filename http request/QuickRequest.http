@@ -1,0 +1,250 @@
+# FastRequest(staybay-backend)
+
+@Authorization = Bearer {{token}}
+@id = 1
+@apartment = 1
+@chat = 1
+@message = 1
+@governorate = 1
+
+###
+# group: Root / Project / Auth
+# @name logout
+POST {{host}}/api/user/logout
+Accept: {{Accept}}
+Authorization: {{Authorization}}
+
+###
+# group: Root / Project / Auth
+# @name register
+POST {{host}}/api/user/register
+Accept: {{Accept}}
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="phone"
+
+0932413259
+--WebAppBoundary
+Content-Disposition: form-data; name="first_name"
+
+nour
+--WebAppBoundary
+Content-Disposition: form-data; name="last_name"
+
+aldeen
+--WebAppBoundary
+Content-Disposition: form-data; name="password"
+
+1234567890
+--WebAppBoundary
+Content-Disposition: form-data; name="password_confirmation"
+
+1234567890
+--WebAppBoundary
+Content-Disposition: form-data; name="birth_date"
+
+2010-02-02
+--WebAppBoundary
+Content-Disposition: form-data; name="id_card"; filename="01.jpg"
+
+< /home/nour/Pictures/01.jpg
+--WebAppBoundary--
+
+###
+# group: Root / Project / Auth
+# @name login
+POST {{host}}/api/user/login
+Accept: {{Accept}}
+Content-Type: application/x-www-form-urlencoded
+
+phone=1234567890&password=password
+
+> {%
+    client.global.set("token", response.body.token);
+%}
+
+###
+# group: Root / Project / Notification
+# @name get notifications
+GET {{host}}/api/user/notifications
+Accept: {{Accept}}
+Authorization: {{Authorization}}
+
+###
+# group: Root / Project / Notification
+# @name read notification
+POST {{host}}/api/user/notifications/{{id}}/read
+Accept: {{Accept}}
+Authorization: {{Authorization}}
+
+###
+# group: Root / Project / apartments
+# @name show all apartments
+GET {{host}}/api/apartments
+Accept: {{Accept}}
+Authorization: {{Authorization}}
+
+###
+# group: Root / Project / apartments
+# @name show apartment
+GET {{host}}/api/apartments/{{apartment}}
+Accept: {{Accept}}
+Authorization: {{Authorization}}
+
+###
+# group: Root / Project / apartments
+# @name delete apartment
+DELETE {{host}}/api/apartments/{{apartment}}
+Accept: {{Accept}}
+Authorization: {{Authorization}}
+
+###
+# group: Root / Project / apartments
+# @name update apartment
+PUT {{host}}/api/apartments/{{apartment}}
+Accept: {{Accept}}
+Authorization: {{Authorization}}
+Content-Type: application/x-www-form-urlencoded
+
+title=Updated+Title&price=150
+
+###
+# group: Root / Project / apartments
+# @name store apartment
+POST {{host}}/api/apartments
+Accept: {{Accept}}
+Authorization: {{Authorization}}
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="city_id"
+
+1
+--WebAppBoundary
+Content-Disposition: form-data; name="title"
+
+Nice apartment
+--WebAppBoundary
+Content-Disposition: form-data; name="description"
+
+Very nice place
+--WebAppBoundary
+Content-Disposition: form-data; name="price"
+
+120
+--WebAppBoundary
+Content-Disposition: form-data; name="rooms"
+
+3
+--WebAppBoundary
+Content-Disposition: form-data; name="bedrooms"
+
+2
+--WebAppBoundary
+Content-Disposition: form-data; name="size"
+
+90
+--WebAppBoundary
+Content-Disposition: form-data; name="has_pool"
+
+1
+--WebAppBoundary
+Content-Disposition: form-data; name="has_wifi"
+
+1
+--WebAppBoundary
+Content-Disposition: form-data; name="cover_image"; filename="01.jpg"
+
+< /home/nour/Pictures/01.jpg
+--WebAppBoundary--
+
+###
+# group: Root / Project / apartments
+# @name add favorite apartment
+POST {{host}}/api/apartments/favorite/add/{{apartment}}
+Accept: {{Accept}}
+Authorization: {{Authorization}}
+
+###
+# group: Root / Project / apartments
+# @name remove favorite apartment
+DELETE {{host}}/api/apartments/favorite/remove/{{apartment}}
+Accept: {{Accept}}
+Authorization: {{Authorization}}
+
+###
+# group: Root / Project / apartments
+# @name favorite apartments
+GET {{host}}/api/apartments/favorite
+Accept: {{Accept}}
+Authorization: {{Authorization}}
+
+###
+# group: Root / Project / apartments
+# @name show my apartments
+GET {{host}}/api/apartments/my
+Accept: {{Accept}}
+Authorization: {{Authorization}}
+
+###
+# group: Root / Project / chats
+# @name show all chats
+GET {{host}}/api/chat
+Accept: {{Accept}}
+Authorization: {{Authorization}}
+
+###
+# group: Root / Project / chats
+# @name send message
+POST {{host}}/api/chat/send
+Accept: {{Accept}}
+Authorization: {{Authorization}}
+Content-Type: application/x-www-form-urlencoded
+
+receiver_id=1&message=hmm
+
+###
+# group: Root / Project / chats
+# @name show chat messages
+GET {{host}}/api/chat/{{chat}}
+Accept: {{Accept}}
+Authorization: {{Authorization}}
+
+###
+# group: Root / Project / chats
+# @name edit message
+PATCH {{host}}/api/message/{{message}}
+Accept: {{Accept}}
+Authorization: {{Authorization}}
+Content-Type: application/x-www-form-urlencoded
+
+message=edited
+
+###
+# group: Root / Project / chats
+# @name delete message
+DELETE {{host}}/api/message/{{message}}
+Accept: {{Accept}}
+Authorization: {{Authorization}}
+
+###
+# group: Root / Project / chats
+# @name read message
+PATCH {{host}}/api/message/{{message}}/read
+Accept: {{Accept}}
+Authorization: {{Authorization}}
+
+###
+# group: Root / Project / governorates
+# @name index
+GET {{host}}/api/governorates
+Accept: {{Accept}}
+Authorization: {{Authorization}}
+
+###
+# group: Root / Project / governorates
+# @name show
+GET {{host}}/api/governorates/{{governorate}}
+Accept: {{Accept}}
+Authorization: {{Authorization}}
