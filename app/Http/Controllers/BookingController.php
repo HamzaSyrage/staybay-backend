@@ -2,16 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PayBookingRequest;
+use App\Http\Requests\RatingBookingRequest;
 use App\Models\Booking;
 use App\Http\Requests\StoreBookingRequest;
 use App\Http\Requests\UpdateBookingRequest;
+use App\Http\Requests\UpdateOwnerBookingRequest;
 use App\Http\Resources\BookingResource;
 use App\Models\Apartment;
 use App\Models\User;
 use App\Services\NotificationService;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class BookingController extends Controller
 {
@@ -133,52 +136,178 @@ class BookingController extends Controller
      */
     public function update(UpdateBookingRequest $request, Booking $booking)
     {
-        //user authorize
-        $user = $request->user();
-        $apartment = Apartment::findOrFail($booking->apartment_id);
         $validated = $request->validated();
-        NotificationService::sendNotification($apartment->user,
-            response()->json([
-            'message'=>'booking needs approval',
-            'code'=>'200',
-            'user'=>$user,
-            'apartment'=>$apartment,
-        ]));
-        $booking->update([...$validated, 'status' => 'pending']);
-        return response()->json([
-            'status' => 201,
-            'message' => 'Booking edited successfully.',
-            'data' => BookingResource::make($booking->load(['apartment'])),
-        ], 201);
-    }
-    public function owner_update(UpdateBookingRequest $request, Booking $booking)
-    {
-        //user authorize
         $user = $request->user();
-        $apartment = Apartment::findOrFail($booking->apartment_id);
-        $validated = $request->validated();
-        NotificationService::sendNotification(
-            $apartment->user,
-            response()->json([
-                'message' => 'booking needs approval',
-                'code' => '200',
-                'user' => $user,
-                'apartment' => $apartment,
-            ])
-        );
-        $booking->update([...$validated, 'status' => 'pending']);
+        $apartment = $booking->apartment;
+
+        if (($validated['status'] ?? null) === 'cancelled') {
+            $booking->update([
+                'status' => 'cancelled',
+            ]);
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'Booking cancelled successfully.',
+                'data' => BookingResource::make($booking),
+            ]);
+        }
+
+        if (isset($validated['start_date'], $validated['end_date'])) {
+
+            $start = Carbon::parse($validated['start_date']);
+            $end = Carbon::parse($validated['end_date']);
+
+            if (
+                !$apartment->isAvailable($start, $end, $booking->id ?? null)
+            ) {
+                abort(422, 'The apartment is not available for the selected dates.');
+            }
+
+            $totalPrice = ($start->diffInDays($end) + 1) * $apartment->price;
+
+            $booking->update([
+                'start_date' => $start,
+                'end_date' => $end,
+                'total_price' => $totalPrice,
+                'status' => 'pending',
+            ]);
+
+            NotificationService::sendNotification(
+                $apartment->user,
+                response()->json([
+                    'message' => 'booking needs approval',
+                    'code' => '200',
+                    'user' => $user,
+                    'apartment' => $apartment,
+                ])
+            );
+        }
+
         return response()->json([
-            'status' => 201,
-            'message' => 'Booking edited successfully.',
-            'data' => BookingResource::make($booking->load(['apartment'])),
-        ], 201);
+            'status' => 200,
+            'message' => 'Booking updated successfully.',
+            'data' => BookingResource::make($booking->load('apartment')),
+        ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function cancel(Booking $booking)
+    public function owner_update(
+        UpdateOwnerBookingRequest $request,
+        Booking $booking
+    ) {
+        if ($booking->status === 'cancelled') {
+            abort(422, 'Cancelled bookings cannot be approved or rejected.');
+        }
+        $validated = $request->validated();
+
+        $booking->update([
+            'status' => $validated['status'],
+        ]);
+
+        NotificationService::sendNotification(
+            $booking->user,
+            'Your booking was ' . $validated['status'],
+            [
+                'booking_id' => $booking->id,
+                'apartment_id' => $booking->apartment_id,
+                'status' => $validated['status'],
+                'type' => 'booking_status_update',
+            ]
+        );
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Booking status updated successfully.',
+            'data' => BookingResource::make(
+                $booking->load(['apartment'])
+            ),
+        ]);
+    }
+
+
+    public function pay(Booking $booking, PayBookingRequest $request)
     {
-        $booking->update(['status'=>'cancelled']);
+        $user = $request->user();
+
+        if ($booking->user_id !== $user->id) {
+            abort(403, 'You are not allowed to pay for this booking.');
+        }
+
+        if ($booking->status !== 'approved') {
+            abort(422, 'Booking must be approved before payment.');
+        }
+
+        if ($booking->paid_at) {
+            abort(422, 'Booking already paid.');
+        }
+
+        $owner = $booking->apartment->user;
+        if (!$owner) {
+            abort(422, 'Apartment owner not found.');
+        }
+
+        DB::transaction(function () use ($user, $owner, $booking) {
+            $user->transferBalanceTo($owner, $booking->total_price);
+
+            $booking->paid_at = now();
+            $booking->status = 'completed';
+            $booking->save();
+        });
+
+        $booking->refresh();
+
+        NotificationService::sendNotification(
+            $user,
+            'Payment successful',
+            [
+                'booking_id' => $booking->id,
+                'amount' => $booking->total_price,
+                'type' => 'payment_success',
+            ]
+        );
+
+        NotificationService::sendNotification(
+            $owner,
+            'You received a payment',
+            [
+                'booking_id' => $booking->id,
+                'amount' => $booking->total_price,
+                'type' => 'payment_received',
+            ]
+        );
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Payment completed successfully.',
+            'data' => BookingResource::make($booking->load(['apartment'])),
+        ]);
+    }
+
+    public function rate(Booking $booking, RatingBookingRequest $request)
+    {
+        $user = $request->user();
+
+        if ($booking->user_id !== $user->id) {
+            abort(403, 'You are not allowed to rate this booking.');
+        }
+
+        if ($booking->rated_at !== null) {
+            abort(422, 'Booking already rated.');
+        }
+
+        if ($booking->status !== 'completed') {
+            abort(422, 'Booking must be completed before rating.');
+        }
+
+        $validated = $request->validated();
+        $booking->update([
+            'rating' => $validated['rating'],
+            'rated_at' => Carbon::now(),
+        ]);
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Booking rated successfully.',
+            'data' => BookingResource::make($booking),
+        ]);
     }
 }

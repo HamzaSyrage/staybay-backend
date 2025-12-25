@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('phone')->unique();
             $table->string('first_name');
             $table->string('last_name');
+            $table->float('balance')->default(10000.0);
             $table->string('avatar')->nullable();
             $table->string('id_card');
             $table->date('birth_date');
@@ -24,7 +25,6 @@ return new class extends Migration
             $table->timestamp('user_verified_at')->nullable();
             $table->string('password');
             $table->boolean('is_admin')->default(false);
-            $table->float('balance')->default(10000.0);
             $table->rememberToken();
             $table->timestamps();
         });

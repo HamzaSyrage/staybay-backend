@@ -158,6 +158,14 @@ class DatabaseSeeder extends Seeder
             'is_admin' => true,
             'user_verified_at' => now(),
         ]);
+        User::factory()->create([
+            'first_name' => 'Normal',
+            'last_name' => 'User',
+            'phone' => '9876543210',
+            'password' => 'password',
+            'is_admin' => false,
+            'user_verified_at' => now(),
+        ]);
 
         $governorates = collect();
         $cities = collect();

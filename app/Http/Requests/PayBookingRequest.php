@@ -4,15 +4,16 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateBookingRequest extends FormRequest
+class PayBookingRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        $booking = $this->route('booking');
-        return $booking && $this->user()->id === $booking->user_id && $booking->status === 'pending';
+        // $booking = $this->route('booking');
+        // return $booking && $this->user()->id === $booking->user_id && $booking->status === 'approved' && $booking->paid_at === null;
+        return true;
     }
 
     /**
@@ -23,9 +24,7 @@ class UpdateBookingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'start_date' => ['sometimes', 'date', 'before:end_date'],
-            'end_date' => ['sometimes', 'date', 'after:start_date'],
-            'status' => ['sometimes', 'in:cancelled'],
+
         ];
     }
 }

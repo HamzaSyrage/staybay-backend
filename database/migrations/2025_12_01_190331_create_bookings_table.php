@@ -18,7 +18,7 @@ return new class extends Migration {
             $table->foreignIdFor(Apartment::class)->constrained()->onDelete('cascade');
             $table->date('start_date');
             $table->date('end_date');
-            $table->enum('status', ['pending', 'approved', 'rejected', 'cancelled', 'completed','request_cancel','request_edit'])->default('pending');
+            $table->enum('status', ['pending', 'approved', 'rejected', 'cancelled', 'completed', 'finished'])->default('pending');
             $table->float('total_price');
             $table->float('rating')->nullable();
             $table->dateTime('rated_at')->nullable();
