@@ -24,7 +24,7 @@ class ApartmentFactory extends Factory
             'description' => $this->faker->paragraph(),
             'price' => $this->faker->numberBetween(50, 500),
             'rating' => 0,
-            'rooms' => $this->faker->numberBetween(1, 10),
+            'bathroom' => $this->faker->numberBetween(1, 10),
             'bedrooms' => $this->faker->numberBetween(1, 5),
             'size' => $this->faker->numberBetween(20, 200),
             'has_pool' => $this->faker->boolean(),

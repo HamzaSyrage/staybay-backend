@@ -18,7 +18,7 @@ class Apartment extends Model
         'description',
         'price',
         'rating',
-        'rooms',
+        'bathroom',
         'bedrooms',
         'size',
         'has_pool',
@@ -76,11 +76,18 @@ class Apartment extends Model
             ->count();
     }
 
-    public function isAvailable(Carbon $start, Carbon $end): bool
-    {
+    public function isAvailable(
+        Carbon $start,
+        Carbon $end,
+        ?int $BookingId = null
+    ): bool {
         return !$this->bookings()
+            ->when($BookingId, function ($q) use ($BookingId) {
+                $q->where('id', '!=', $BookingId);
+            })
             ->where(function ($query) use ($start, $end) {
-                $query->whereBetween('start_date', [$start, $end])
+                $query
+                    ->whereBetween('start_date', [$start, $end])
                     ->orWhereBetween('end_date', [$start, $end])
                     ->orWhere(function ($q) use ($start, $end) {
                         $q->where('start_date', '<=', $start)
