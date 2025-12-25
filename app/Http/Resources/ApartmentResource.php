@@ -45,7 +45,7 @@ class ApartmentResource extends JsonResource
             'price' => $this->price,
             'rating' => $this->rating,
             'rating_count' => $this->rating_count(),
-            'bathroom' => $this->bathroom,
+            'bathrooms' => $this->bathrooms,
             'bedrooms' => $this->bedrooms,
             'size' => $this->size,
             'has_pool' => $this->has_pool,

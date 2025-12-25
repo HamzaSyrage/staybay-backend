@@ -29,7 +29,7 @@ class UpdateApartmentRequest extends FormRequest
             'title' => ['sometimes', 'string'],
             'description' => ['sometimes', 'string'],
             'price' => ['sometimes', 'numeric', 'min:0'],
-            'bathroom' => ['sometimes', 'integer', 'min:0'],
+            'bathrooms' => ['sometimes', 'integer', 'min:0'],
             'bedrooms' => ['sometimes', 'integer', 'min:0'],
             'size' => ['sometimes', 'integer', 'min:0'],
             'has_pool' => ['sometimes', 'boolean'],

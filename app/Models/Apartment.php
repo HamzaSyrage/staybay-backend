@@ -18,7 +18,7 @@ class Apartment extends Model
         'description',
         'price',
         'rating',
-        'bathroom',
+        'bathrooms',
         'bedrooms',
         'size',
         'has_pool',

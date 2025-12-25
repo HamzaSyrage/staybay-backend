@@ -29,7 +29,7 @@ class StoreApartmentRequest extends FormRequest
         //     $table->text('description');
         //     $table->float('price');
         //     $table->float('rating')->default(0);
-        //     $table->integer('bathroom');
+        //     $table->integer('bathrooms');
         //     $table->integer('bedrooms');
         //     $table->integer('size');
         //     $table->boolean('has_pool');
@@ -41,7 +41,7 @@ class StoreApartmentRequest extends FormRequest
             'title' => ['required'],
             'description' => ['required'],
             'price' => ['required', 'numeric', 'min:0'],
-            'bathroom' => ['required', 'integer', 'min:0'],
+            'bathrooms' => ['required', 'integer', 'min:0'],
             'bedrooms' => ['required', 'integer', 'min:0'],
             'size' => ['required', 'integer', 'min:0'],
             'has_pool' => ['required', 'boolean'],

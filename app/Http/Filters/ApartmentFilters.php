@@ -15,7 +15,7 @@ class ApartmentFilters
         'city_id',
         'price_min',
         'price_max',
-        'bathroom',
+        'bathrooms',
         'bedrooms',
         'has_pool',
         'has_wifi',
@@ -73,9 +73,9 @@ class ApartmentFilters
         $this->builder->where('price', '<=', $value);
     }
 
-    public function bathroom($value)
+    public function bathrooms($value)
     {
-        $this->builder->where('bathroom', $value);
+        $this->builder->where('bathrooms', $value);
     }
 
     public function bedrooms($value)
