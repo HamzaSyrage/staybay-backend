@@ -20,7 +20,7 @@ class BookingController extends Controller
      */
     public function index(Request $request)
     {
-        //Who the fuck cares about this ???? //? the fucking user that want to get his bookings records
+        //Who the fuck cares about this ???? //? maybe the fucking user that want to get his bookings records
         $bookings = Booking::with(['apartment.user', 'apartment.city', 'apartment.governorate', 'apartment.images'])
             ->where('user_id', $request->user()->id)
             ->get();
@@ -28,7 +28,30 @@ class BookingController extends Controller
         return BookingResource::collection($bookings)
             ->additional([
                 'status' => 200,
-                'message' => 'Bookings fetched successfully.',
+                'message' => 'ur Bookings fetched successfully.',
+            ])
+            ->response()
+            ->setStatusCode(200);
+    }
+    public function own(Request $request)
+    {
+        $ownerId = $request->user()->id;
+
+        $bookings = Booking::with([
+            'apartment.user',
+            'apartment.city',
+            'apartment.governorate',
+            'apartment.images'
+        ])
+            ->whereHas('apartment', function ($query) use ($ownerId) {
+                $query->where('user_id', $ownerId);
+            })
+            ->get();
+
+        return BookingResource::collection($bookings)
+            ->additional([
+                'status' => 200,
+                'message' => 'Bookings for your apartments.',
             ])
             ->response()
             ->setStatusCode(200);
@@ -121,10 +144,34 @@ class BookingController extends Controller
             'user'=>$user,
             'apartment'=>$apartment,
         ]));
-        $booking->update($validated);
+        $booking->update([...$validated, 'status' => 'pending']);
         return response()->json([
-            'message'=>'edited booking successfully'
-        ]);
+            'status' => 201,
+            'message' => 'Booking edited successfully.',
+            'data' => BookingResource::make($booking->load(['apartment'])),
+        ], 201);
+    }
+    public function owner_update(UpdateBookingRequest $request, Booking $booking)
+    {
+        //user authorize
+        $user = $request->user();
+        $apartment = Apartment::findOrFail($booking->apartment_id);
+        $validated = $request->validated();
+        NotificationService::sendNotification(
+            $apartment->user,
+            response()->json([
+                'message' => 'booking needs approval',
+                'code' => '200',
+                'user' => $user,
+                'apartment' => $apartment,
+            ])
+        );
+        $booking->update([...$validated, 'status' => 'pending']);
+        return response()->json([
+            'status' => 201,
+            'message' => 'Booking edited successfully.',
+            'data' => BookingResource::make($booking->load(['apartment'])),
+        ], 201);
     }
 
     /**
