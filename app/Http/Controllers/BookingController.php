@@ -21,15 +21,15 @@ class BookingController extends Controller
     public function apartmentNotAvailableIn($id)
     {
         return Booking::where('apartment_id', $id)
-            ->whereIn('status', ['pending', 'approved', 'rejected', 'cancelled', 'completed','request_cancel','request_edit'])
+            ->whereIn('status', [ 'approved', 'completed'])
             ->where('start_date', '>=', Carbon::now())
             ->get(['start_date', 'end_date']);
-    }    /**
+    }
+    /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        //Who the fuck cares about this ???? //? maybe the fucking user that want to get his bookings records
         $bookings = Booking::with(['apartment.user', 'apartment.city', 'apartment.governorate', 'apartment.images'])
             ->where('user_id', $request->user()->id)
             ->get();
@@ -37,7 +37,7 @@ class BookingController extends Controller
         return BookingResource::collection($bookings)
             ->additional([
                 'status' => 200,
-                'message' => 'ur Bookings fetched successfully.',
+                'message' => 'your Bookings fetched successfully.',
             ])
             ->response()
             ->setStatusCode(200);
@@ -66,13 +66,6 @@ class BookingController extends Controller
             ->setStatusCode(200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -130,14 +123,6 @@ class BookingController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Booking $booking)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(UpdateBookingRequest $request, Booking $booking)
@@ -145,7 +130,8 @@ class BookingController extends Controller
         $validated = $request->validated();
         $user = $request->user();
         $apartment = $booking->apartment;
-
+//        $new_booking = $booking;
+        $new_booking = null;
         if (($validated['status'] ?? null) === 'cancelled') {
             $booking->update([
                 'status' => 'cancelled',
@@ -171,7 +157,8 @@ class BookingController extends Controller
 
             $totalPrice = ($start->diffInDays($end) + 1) * $apartment->price;
 
-            $booking->update([
+            $new_booking = $apartment->Bookings()->create([
+                'user_id' => $user->id,
                 'start_date' => $start,
                 'end_date' => $end,
                 'total_price' => $totalPrice,
@@ -185,6 +172,8 @@ class BookingController extends Controller
                     'code' => '200',
                     'user' => $user,
                     'apartment' => $apartment,
+                    'old_booking' => $booking,
+                    'new_booking' => $new_booking,
                 ])
             );
         }
@@ -192,22 +181,49 @@ class BookingController extends Controller
         return response()->json([
             'status' => 200,
             'message' => 'Booking updated successfully.',
-            'data' => BookingResource::make($booking->load('apartment')),
+            'data' =>
+//                BookingResource::make($new_booking->load('apartment'))
+                [
+                'booking' => BookingResource::make($booking->load('apartment')),
+            'new_booking' => BookingResource::make($new_booking->load('apartment')),
+            ],
         ]);
     }
 
     public function owner_update(
         UpdateOwnerBookingRequest $request,
-        Booking $booking
+        int $booking_id
     ) {
+        $edited_booking = Booking::where('prev_id', $booking_id)->first();
+        $booking = Booking::findOrFail($booking_id);
         if ($booking->status === 'cancelled') {
             abort(422, 'Cancelled bookings cannot be approved or rejected.');
         }
         $validated = $request->validated();
-
+        $status = $booking->status;
         $booking->update([
             'status' => $validated['status'],
         ]);
+        if(isset($edited_booking)){
+            if ($validated['status'] === 'accepted') {
+                $payed_money = 0;
+                if(isset($booking->paid_at))
+                    $payed_money = $booking->total_price;
+                $booking->delete();
+                $edited_booking->id = $edited_booking->prev_id;
+                $edited_booking->prev_id = null;
+                $edited_booking->total_price = Booking::calculatePrice() - $payed_money;
+                $edited_booking->paid_at = null;
+                $edited_booking->save();
+                $booking = $edited_booking;
+            }
+            elseif ($validated['status'] === 'rejected') {
+                $edited_booking->delete();
+                $booking->update([
+                    'status'=>$status,
+                ]);
+            }
+        }
 
         NotificationService::sendNotification(
             $booking->user,
@@ -296,9 +312,9 @@ class BookingController extends Controller
             abort(403, 'You are not allowed to rate this booking.');
         }
 
-        if ($booking->rated_at !== null) {
-            abort(422, 'Booking already rated.');
-        }
+//        if ($booking->rated_at !== null) {
+//            abort(422, 'Booking already rated.');
+//        }
 
         if ($booking->status !== 'completed') {
             abort(422, 'Booking must be completed before rating.');
@@ -309,7 +325,7 @@ class BookingController extends Controller
             'rating' => $validated['rating'],
             'rated_at' => Carbon::now(),
         ]);
-
+        $booking->apartment->reCalculateRating();
         return response()->json([
             'status' => 200,
             'message' => 'Booking rated successfully.',
