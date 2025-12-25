@@ -96,4 +96,9 @@ class Apartment extends Model
             })
             ->exists();
     }
+    public function reCalculateRating(){
+        $query = $this->bookings()->whereNotNull('rating');
+        $this->rating = $query->avg('rating');
+        $this->rating_count = $query->count();
+    }
 }

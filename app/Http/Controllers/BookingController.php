@@ -24,12 +24,12 @@ class BookingController extends Controller
             ->whereIn('status', [ 'approved', 'completed'])
             ->where('start_date', '>=', Carbon::now())
             ->get(['start_date', 'end_date']);
-    }    /**
+    }
+    /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        //Who the fuck cares about this ???? //? maybe the fucking user that want to get his bookings records
         $bookings = Booking::with(['apartment.user', 'apartment.city', 'apartment.governorate', 'apartment.images'])
             ->where('user_id', $request->user()->id)
             ->get();
@@ -37,7 +37,7 @@ class BookingController extends Controller
         return BookingResource::collection($bookings)
             ->additional([
                 'status' => 200,
-                'message' => 'ur Bookings fetched successfully.',
+                'message' => 'your Bookings fetched successfully.',
             ])
             ->response()
             ->setStatusCode(200);
@@ -66,13 +66,6 @@ class BookingController extends Controller
             ->setStatusCode(200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -125,14 +118,6 @@ class BookingController extends Controller
      * Display the specified resource.
      */
     public function show(Booking $booking)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Booking $booking)
     {
         //
     }
@@ -296,9 +281,9 @@ class BookingController extends Controller
             abort(403, 'You are not allowed to rate this booking.');
         }
 
-        if ($booking->rated_at !== null) {
-            abort(422, 'Booking already rated.');
-        }
+//        if ($booking->rated_at !== null) {
+//            abort(422, 'Booking already rated.');
+//        }
 
         if ($booking->status !== 'completed') {
             abort(422, 'Booking must be completed before rating.');
@@ -309,7 +294,7 @@ class BookingController extends Controller
             'rating' => $validated['rating'],
             'rated_at' => Carbon::now(),
         ]);
-
+        $booking->apartment->reCalculateRating();
         return response()->json([
             'status' => 200,
             'message' => 'Booking rated successfully.',
