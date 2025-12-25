@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 // })->middleware('auth:sanctum');
 
 Route::group(["prefix" => "user"], function () {
+    Route::get('/me', [ApiAuthController::class, 'me'])->middleware('auth:sanctum');
     Route::post('/register', [ApiAuthController::class, 'register']);
     Route::post('/login', [ApiAuthController::class, 'login'])->middleware('check_user_credentials','verified_user');
     Route::post('/logout', [ApiAuthController::class, 'logout'])->middleware('auth:sanctum');

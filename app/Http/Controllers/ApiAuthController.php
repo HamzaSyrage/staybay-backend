@@ -80,4 +80,12 @@ class ApiAuthController extends Controller
             'data' => null,
         ]);
     }
+    public function me()
+    {
+        $user = auth('sanctum')->user();
+        return UserResource::make($user)->additional([
+            'status' => 200,
+            'message' => 'User retrieved successfully',
+        ]);
+    }
 }
