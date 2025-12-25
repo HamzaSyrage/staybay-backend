@@ -130,7 +130,8 @@ class BookingController extends Controller
         $validated = $request->validated();
         $user = $request->user();
         $apartment = $booking->apartment;
-
+//        $new_booking = $booking;
+        $new_booking = null;
         if (($validated['status'] ?? null) === 'cancelled') {
             $booking->update([
                 'status' => 'cancelled',
@@ -156,7 +157,8 @@ class BookingController extends Controller
 
             $totalPrice = ($start->diffInDays($end) + 1) * $apartment->price;
 
-            $booking->update([
+            $new_booking = $apartment->Bookings()->create([
+                'user_id' => $user->id,
                 'start_date' => $start,
                 'end_date' => $end,
                 'total_price' => $totalPrice,
@@ -170,6 +172,8 @@ class BookingController extends Controller
                     'code' => '200',
                     'user' => $user,
                     'apartment' => $apartment,
+                    'old_booking' => $booking,
+                    'new_booking' => $new_booking,
                 ])
             );
         }
@@ -177,22 +181,49 @@ class BookingController extends Controller
         return response()->json([
             'status' => 200,
             'message' => 'Booking updated successfully.',
-            'data' => BookingResource::make($booking->load('apartment')),
+            'data' =>
+//                BookingResource::make($new_booking->load('apartment'))
+                [
+                'booking' => BookingResource::make($booking->load('apartment')),
+            'new_booking' => BookingResource::make($new_booking->load('apartment')),
+            ],
         ]);
     }
 
     public function owner_update(
         UpdateOwnerBookingRequest $request,
-        Booking $booking
+        int $booking_id
     ) {
+        $edited_booking = Booking::where('prev_id', $booking_id)->first();
+        $booking = Booking::findOrFail($booking_id);
         if ($booking->status === 'cancelled') {
             abort(422, 'Cancelled bookings cannot be approved or rejected.');
         }
         $validated = $request->validated();
-
+        $status = $booking->status;
         $booking->update([
             'status' => $validated['status'],
         ]);
+        if(isset($edited_booking)){
+            if ($validated['status'] === 'accepted') {
+                $payed_money = 0;
+                if(isset($booking->paid_at))
+                    $payed_money = $booking->total_price;
+                $booking->delete();
+                $edited_booking->id = $edited_booking->prev_id;
+                $edited_booking->prev_id = null;
+                $edited_booking->total_price = Booking::calculatePrice() - $payed_money;
+                $edited_booking->paid_at = null;
+                $edited_booking->save();
+                $booking = $edited_booking;
+            }
+            elseif ($validated['status'] === 'rejected') {
+                $edited_booking->delete();
+                $booking->update([
+                    'status'=>$status,
+                ]);
+            }
+        }
 
         NotificationService::sendNotification(
             $booking->user,
