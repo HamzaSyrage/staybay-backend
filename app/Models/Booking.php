@@ -16,6 +16,8 @@ class Booking extends Model
         'end_date',
         'total_price',
         'status',
+        'rating',
+        'rated_at',
     ];
     public function user()
     {

@@ -21,7 +21,7 @@ class BookingController extends Controller
     public function apartmentNotAvailableIn($id)
     {
         return Booking::where('apartment_id', $id)
-            ->whereIn('status', ['pending', 'approved', 'rejected', 'cancelled', 'completed','request_cancel','request_edit'])
+            ->whereIn('status', [ 'approved', 'completed'])
             ->where('start_date', '>=', Carbon::now())
             ->get(['start_date', 'end_date']);
     }    /**
