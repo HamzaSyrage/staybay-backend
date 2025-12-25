@@ -60,5 +60,10 @@ Route::group(['prefix' => 'governorates', 'middleware' => 'auth:sanctum'], funct
 // Route::group(['prefix' => 'cities', 'middleware' => 'auth:sanctum'], function () {});
 Route::group(['prefix' => 'bookings', 'middleware' => 'auth:sanctum'], function () {
     Route::get('/', [BookingController::class, 'index']);
-    Route::post('/', [BookingController::class, 'store']);
+    Route::post('/', [BookingController::class, 'store'])->middleware('can_book_apartment');
+    Route::get('/own', [BookingController::class, 'own']);
+    Route::put('/update/user/{booking}', [BookingController::class, 'update']);
+    Route::put('/update/owner/{booking}', [BookingController::class, 'owner_update']);
+    Route::post('/pay/{booking}', [BookingController::class, 'pay'])->middleware('can_user_pay');
+    Route::post('/rate/{booking}', [BookingController::class, 'rate'])->middleware('can_user_rate');
 });

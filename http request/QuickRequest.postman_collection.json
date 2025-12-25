@@ -1,1 +1,1034 @@
-{"info":{"name":"FastRequest(staybay-backend)","schema":"https://schema.getpostman.com/json/collection/v2.1.0/collection.json"},"item":[{"item":[{"item":[{"item":[{"name":"logout","request":{"body":{"formdata":[{"key":"phone","type":"text","value":"1234567890"},{"key":"password","type":"text","value":"password"}],"mode":"formdata"},"header":[{"disabled":false,"key":"Accept","value":"{{Accept}}"},{"disabled":false,"key":"Authorization","value":"{{Authorization}}"}],"method":"POST","url":{"host":["{{host}}"],"path":["api","user","logout"],"query":[],"raw":"{{host}}/api/user/logout"}}},{"name":"register","request":{"body":{"formdata":[{"key":"phone","type":"text","value":"0932413259"},{"key":"first_name","type":"text","value":"nour"},{"key":"last_name","type":"text","value":"aldeen"},{"key":"password","type":"text","value":"1234567890"},{"key":"id_card","src":"/home/nour/Pictures/01.jpg","type":"file"},{"key":"birth_date","type":"text","value":"2010-2-2"},{"key":"password_confirmation","type":"text","value":"1234567890"}],"mode":"formdata"},"header":[{"disabled":false,"key":"Accept","value":"{{Accept}}"},{"disabled":false,"key":"Authorization","value":"{{Authorization}}"}],"method":"POST","url":{"host":["{{host}}"],"path":["api","user","register"],"query":[],"raw":"{{host}}/api/user/register"}}},{"name":"login","request":{"body":{"formdata":[{"key":"phone","type":"text","value":"1234567890"},{"key":"password","type":"text","value":"password"}],"mode":"formdata"},"header":[{"disabled":false,"key":"Accept","value":"{{Accept}}"},{"disabled":false,"key":"Authorization","value":"{{Authorization}}"}],"method":"POST","url":{"host":["{{host}}"],"path":["api","user","login"],"query":[],"raw":"{{host}}/api/user/login"}}}],"name":"Auth"},{"item":[{"name":"get notifications","request":{"body":{},"header":[{"disabled":false,"key":"Accept","value":"{{Accept}}"},{"disabled":false,"key":"Authorization","value":"{{Authorization}}"}],"method":"GET","url":{"host":["{{host}}"],"path":["api","user","notifications"],"query":[],"raw":"{{host}}/api/user/notifications"}}},{"name":"read notification","request":{"body":{},"header":[{"disabled":false,"key":"Accept","value":"{{Accept}}"},{"disabled":false,"key":"Authorization","value":"{{Authorization}}"}],"method":"POST","url":{"host":["{{host}}"],"path":["api","user","notifications","{id}","read"],"query":[],"raw":"{{host}}/api/user/notifications/{id}/read"}}}],"name":"Notification"},{"item":[{"name":"show all apartmetns","request":{"body":{},"header":[{"disabled":false,"key":"Accept","value":"{{Accept}}"},{"disabled":false,"key":"Authorization","value":"{{Authorization}}"}],"method":"GET","url":{"host":["{{host}}"],"path":["api","apartments",""],"query":[],"raw":"{{host}}/api/apartments/"}}},{"name":"delete apartment","request":{"body":{},"header":[{"disabled":false,"key":"Accept","value":"{{Accept}}"},{"disabled":false,"key":"Authorization","value":"{{Authorization}}"}],"method":"DELETE","url":{"host":["{{host}}"],"path":["api","apartments","{apartment}"],"query":[],"raw":"{{host}}/api/apartments/{apartment}"}}},{"name":"update apartment","request":{"body":{"formdata":[{"key":"city_id","type":"text","value":""},{"key":"title","type":"text","value":""},{"key":"description","type":"text","value":""},{"key":"price","type":"text","value":""},{"key":"rooms","type":"text","value":""},{"key":"bedrooms","type":"text","value":""},{"key":"size","type":"text","value":""},{"key":"has_pool","type":"text","value":""},{"key":"has_wifi","type":"text","value":""},{"key":"cover_image","src":"","type":"file"},{"key":"images","src":"","type":"file"}],"mode":"formdata"},"header":[{"disabled":false,"key":"Accept","value":"{{Accept}}"},{"disabled":false,"key":"Authorization","value":"{{Authorization}}"}],"method":"PUT","url":{"host":["{{host}}"],"query":[],"raw":"{{host}}http://127.0.0.1:8000/api/apartments/{apartment}"}}},{"name":"show apartment","request":{"body":{},"header":[{"disabled":false,"key":"Accept","value":"{{Accept}}"},{"disabled":false,"key":"Authorization","value":"{{Authorization}}"}],"method":"GET","url":{"host":["{{host}}"],"path":["api","apartments","{apartment}"],"query":[],"raw":"{{host}}/api/apartments/{apartment}"}}},{"name":"remove favorite apartment","request":{"body":{},"header":[{"disabled":false,"key":"Accept","value":"{{Accept}}"},{"disabled":false,"key":"Authorization","value":"{{Authorization}}"}],"method":"DELETE","url":{"host":["{{host}}"],"path":["api","apartments","favorite","remove","{apartment}"],"query":[],"raw":"{{host}}/api/apartments/favorite/remove/{apartment}"}}},{"name":"add favorite apartment","request":{"body":{},"header":[{"disabled":false,"key":"Accept","value":"{{Accept}}"},{"disabled":false,"key":"Authorization","value":"{{Authorization}}"}],"method":"POST","url":{"host":["{{host}}"],"path":["api","apartments","favorite","add","{apartment}"],"query":[],"raw":"{{host}}/api/apartments/favorite/add/{apartment}"}}},{"name":"favorite apartments","request":{"body":{},"header":[{"disabled":false,"key":"Accept","value":"{{Accept}}"},{"disabled":false,"key":"Authorization","value":"{{Authorization}}"}],"method":"GET","url":{"host":["{{host}}"],"path":["api","apartments","favorite"],"query":[],"raw":"{{host}}/api/apartments/favorite"}}},{"name":"show my apartmetns","request":{"body":{},"header":[{"disabled":false,"key":"Accept","value":"{{Accept}}"},{"disabled":false,"key":"Authorization","value":"{{Authorization}}"}],"method":"GET","url":{"host":["{{host}}"],"path":["api","apartments","my"],"query":[],"raw":"{{host}}/api/apartments/my"}}},{"name":"store apartment","request":{"body":{"formdata":[{"key":"city_id","type":"text","value":"1"},{"key":"title","type":"text","value":"no"},{"key":"description","type":"text","value":"o"},{"key":"price","type":"text","value":"12"},{"key":"rooms","type":"text","value":"12"},{"key":"bedrooms","type":"text","value":"12"},{"key":"size","type":"text","value":"12"},{"key":"has_pool","type":"text","value":"1"},{"key":"has_wifi","type":"text","value":"1"},{"key":"cover_image","src":"/home/nour/Pictures/01.jpg","type":"file"}],"mode":"formdata"},"header":[{"disabled":false,"key":"Accept","value":"{{Accept}}"},{"disabled":false,"key":"Authorization","value":"{{Authorization}}"}],"method":"POST","url":{"host":["{{host}}"],"path":["api","apartments",""],"query":[],"raw":"{{host}}/api/apartments/"}}}],"name":"apartments"},{"item":[{"name":"show all chats","request":{"body":{},"header":[{"disabled":false,"key":"Accept","value":"{{Accept}}"},{"disabled":false,"key":"Authorization","value":"{{Authorization}}"}],"method":"GET","url":{"host":["{{host}}"],"path":["api","chat",""],"query":[],"raw":"{{host}}/api/chat/"}}},{"name":"send message","request":{"body":{"mode":"urlencoded","urlencoded":[{"key":"receiver_id","type":"text","value":"1"},{"key":"message","type":"text","value":"hmm"}]},"header":[{"disabled":false,"key":"Accept","value":"{{Accept}}"},{"disabled":false,"key":"Authorization","value":"{{Authorization}}"}],"method":"POST","url":{"host":["{{host}}"],"query":[],"raw":"{{host}}http://127.0.0.1:8000/api/chat/send"}}},{"name":"show chat messages","request":{"body":{},"header":[{"disabled":false,"key":"Accept","value":"{{Accept}}"},{"disabled":false,"key":"Authorization","value":"{{Authorization}}"}],"method":"GET","url":{"host":["{{host}}"],"path":["api","chat","{chat}"],"query":[],"raw":"{{host}}/api/chat/{chat}"}}},{"name":"delete chat","request":{"body":{},"header":[{"disabled":false,"key":"Accept","value":"{{Accept}}"},{"disabled":false,"key":"Authorization","value":"{{Authorization}}"}],"method":"DELETE","url":{"host":["{{host}}"],"path":["api","chat","{chat}"],"query":[],"raw":"{{host}}/api/chat/{chat}"}}},{"name":"edit message","request":{"body":{"formdata":[{"key":"message","type":"text","value":"fuck"}],"mode":"formdata"},"header":[{"disabled":false,"key":"Accept","value":"{{Accept}}"},{"disabled":false,"key":"Authorization","value":"{{Authorization}}"}],"method":"PATCH","url":{"host":["{{host}}"],"query":[],"raw":"{{host}}http://127.0.0.1:8000/api/message/{message}"}}},{"name":"delete message","request":{"body":{},"header":[{"disabled":false,"key":"Accept","value":"{{Accept}}"},{"disabled":false,"key":"Authorization","value":"{{Authorization}}"}],"method":"DELETE","url":{"host":["{{host}}"],"query":[],"raw":"{{host}}http://127.0.0.1:8000/api/message/{message}"}}},{"name":"read message","request":{"body":{},"header":[{"disabled":false,"key":"Accept","value":"{{Accept}}"},{"disabled":false,"key":"Authorization","value":"{{Authorization}}"}],"method":"PATCH","url":{"host":["{{host}}"],"path":["api","message","{message}","read"],"query":[],"raw":"{{host}}/api/message/{message}/read"}}}],"name":"chats"},{"item":[{"name":"index","request":{"body":{},"header":[{"disabled":false,"key":"Accept","value":"{{Accept}}"},{"disabled":false,"key":"Authorization","value":"{{Authorization}}"}],"method":"GET","url":{"host":["{{host}}"],"path":["api","governorates",""],"query":[],"raw":"{{host}}/api/governorates/"}}},{"name":"show","request":{"body":{},"header":[{"disabled":false,"key":"Accept","value":"{{Accept}}"},{"disabled":false,"key":"Authorization","value":"{{Authorization}}"}],"method":"GET","url":{"host":["{{host}}"],"path":["api","governorates","{governorate}"],"query":[],"raw":"{{host}}/api/governorates/{governorate}"}}}],"name":"governorates"}],"name":"Project"},{"item":[{"item":[{"name":"get notifications","request":{"body":{},"header":[{"disabled":false,"key":"Accept","value":"{{Accept}}"},{"disabled":false,"key":"Authorization","value":"{{Authorization}}"}],"method":"GET","url":{"host":["{{host}}"],"path":["api","user","notifications"],"query":[],"raw":"{{host}}/api/user/notifications"}}},{"name":"read notification","request":{"body":{},"header":[{"disabled":false,"key":"Accept","value":"{{Accept}}"},{"disabled":false,"key":"Authorization","value":"{{Authorization}}"}],"method":"POST","url":{"host":["{{host}}"],"path":["api","user","notifications","{id}","read"],"query":[],"raw":"{{host}}/api/user/notifications/{id}/read"}}}],"name":"php"}],"name":"staybay-backend"}],"name":"Root"}],"variable":[{"key":"host","value":"http://127.0.0.1:8000"},{"key":"Accept","value":"application/json"},{"key":"Authorization","value":"Bearer 1|W2MUw0LtRuVcKiaMzWcmV4aQj8Eor8fJBlydMk4m905bd9e3"}]}
+{
+    "info": {
+        "name": "FastRequest(staybay-backend)",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "item": [
+                {
+                    "item": [
+                        {
+                            "item": [
+                                {
+                                    "name": "logout",
+                                    "request": {
+                                        "body": {
+                                            "formdata": [
+                                                {
+                                                    "key": "phone",
+                                                    "type": "text",
+                                                    "value": "1234567890"
+                                                },
+                                                {
+                                                    "key": "password",
+                                                    "type": "text",
+                                                    "value": "password"
+                                                }
+                                            ],
+                                            "mode": "formdata"
+                                        },
+                                        "header": [
+                                            {
+                                                "disabled": false,
+                                                "key": "Accept",
+                                                "value": "{{Accept}}"
+                                            },
+                                            {
+                                                "disabled": false,
+                                                "key": "Authorization",
+                                                "value": "{{Authorization}}"
+                                            }
+                                        ],
+                                        "method": "POST",
+                                        "url": {
+                                            "host": [
+                                                "{{host}}"
+                                            ],
+                                            "path": [
+                                                "api",
+                                                "user",
+                                                "logout"
+                                            ],
+                                            "query": [],
+                                            "raw": "{{host}}/api/user/logout"
+                                        }
+                                    }
+                                },
+                                {
+                                    "name": "register",
+                                    "request": {
+                                        "body": {
+                                            "formdata": [
+                                                {
+                                                    "key": "phone",
+                                                    "type": "text",
+                                                    "value": "0932413259"
+                                                },
+                                                {
+                                                    "key": "first_name",
+                                                    "type": "text",
+                                                    "value": "nour"
+                                                },
+                                                {
+                                                    "key": "last_name",
+                                                    "type": "text",
+                                                    "value": "aldeen"
+                                                },
+                                                {
+                                                    "key": "password",
+                                                    "type": "text",
+                                                    "value": "1234567890"
+                                                },
+                                                {
+                                                    "key": "id_card",
+                                                    "src": "/home/nour/Pictures/01.jpg",
+                                                    "type": "file"
+                                                },
+                                                {
+                                                    "key": "birth_date",
+                                                    "type": "text",
+                                                    "value": "2010-2-2"
+                                                },
+                                                {
+                                                    "key": "password_confirmation",
+                                                    "type": "text",
+                                                    "value": "1234567890"
+                                                }
+                                            ],
+                                            "mode": "formdata"
+                                        },
+                                        "header": [
+                                            {
+                                                "disabled": false,
+                                                "key": "Accept",
+                                                "value": "{{Accept}}"
+                                            },
+                                            {
+                                                "disabled": false,
+                                                "key": "Authorization",
+                                                "value": "{{Authorization}}"
+                                            }
+                                        ],
+                                        "method": "POST",
+                                        "url": {
+                                            "host": [
+                                                "{{host}}"
+                                            ],
+                                            "path": [
+                                                "api",
+                                                "user",
+                                                "register"
+                                            ],
+                                            "query": [],
+                                            "raw": "{{host}}/api/user/register"
+                                        }
+                                    }
+                                },
+                                {
+                                    "name": "login",
+                                    "request": {
+                                        "body": {
+                                            "formdata": [
+                                                {
+                                                    "key": "phone",
+                                                    "type": "text",
+                                                    "value": "1234567890"
+                                                },
+                                                {
+                                                    "key": "password",
+                                                    "type": "text",
+                                                    "value": "password"
+                                                }
+                                            ],
+                                            "mode": "formdata"
+                                        },
+                                        "header": [
+                                            {
+                                                "disabled": false,
+                                                "key": "Accept",
+                                                "value": "{{Accept}}"
+                                            },
+                                            {
+                                                "disabled": false,
+                                                "key": "Authorization",
+                                                "value": "{{Authorization}}"
+                                            }
+                                        ],
+                                        "method": "POST",
+                                        "url": {
+                                            "host": [
+                                                "{{host}}"
+                                            ],
+                                            "path": [
+                                                "api",
+                                                "user",
+                                                "login"
+                                            ],
+                                            "query": [],
+                                            "raw": "{{host}}/api/user/login"
+                                        }
+                                    }
+                                }
+                            ],
+                            "name": "Auth"
+                        },
+                        {
+                            "item": [
+                                {
+                                    "name": "get notifications",
+                                    "request": {
+                                        "body": {},
+                                        "header": [
+                                            {
+                                                "disabled": false,
+                                                "key": "Accept",
+                                                "value": "{{Accept}}"
+                                            },
+                                            {
+                                                "disabled": false,
+                                                "key": "Authorization",
+                                                "value": "{{Authorization}}"
+                                            }
+                                        ],
+                                        "method": "GET",
+                                        "url": {
+                                            "host": [
+                                                "{{host}}"
+                                            ],
+                                            "path": [
+                                                "api",
+                                                "user",
+                                                "notifications"
+                                            ],
+                                            "query": [],
+                                            "raw": "{{host}}/api/user/notifications"
+                                        }
+                                    }
+                                },
+                                {
+                                    "name": "read notification",
+                                    "request": {
+                                        "body": {},
+                                        "header": [
+                                            {
+                                                "disabled": false,
+                                                "key": "Accept",
+                                                "value": "{{Accept}}"
+                                            },
+                                            {
+                                                "disabled": false,
+                                                "key": "Authorization",
+                                                "value": "{{Authorization}}"
+                                            }
+                                        ],
+                                        "method": "POST",
+                                        "url": {
+                                            "host": [
+                                                "{{host}}"
+                                            ],
+                                            "path": [
+                                                "api",
+                                                "user",
+                                                "notifications",
+                                                "{id}",
+                                                "read"
+                                            ],
+                                            "query": [],
+                                            "raw": "{{host}}/api/user/notifications/{id}/read"
+                                        }
+                                    }
+                                }
+                            ],
+                            "name": "Notification"
+                        },
+                        {
+                            "item": [
+                                {
+                                    "name": "show all apartmetns",
+                                    "request": {
+                                        "body": {},
+                                        "header": [
+                                            {
+                                                "disabled": false,
+                                                "key": "Accept",
+                                                "value": "{{Accept}}"
+                                            },
+                                            {
+                                                "disabled": false,
+                                                "key": "Authorization",
+                                                "value": "{{Authorization}}"
+                                            }
+                                        ],
+                                        "method": "GET",
+                                        "url": {
+                                            "host": [
+                                                "{{host}}"
+                                            ],
+                                            "path": [
+                                                "api",
+                                                "apartments",
+                                                ""
+                                            ],
+                                            "query": [],
+                                            "raw": "{{host}}/api/apartments/"
+                                        }
+                                    }
+                                },
+                                {
+                                    "name": "delete apartment",
+                                    "request": {
+                                        "body": {},
+                                        "header": [
+                                            {
+                                                "disabled": false,
+                                                "key": "Accept",
+                                                "value": "{{Accept}}"
+                                            },
+                                            {
+                                                "disabled": false,
+                                                "key": "Authorization",
+                                                "value": "{{Authorization}}"
+                                            }
+                                        ],
+                                        "method": "DELETE",
+                                        "url": {
+                                            "host": [
+                                                "{{host}}"
+                                            ],
+                                            "path": [
+                                                "api",
+                                                "apartments",
+                                                "{apartment}"
+                                            ],
+                                            "query": [],
+                                            "raw": "{{host}}/api/apartments/{apartment}"
+                                        }
+                                    }
+                                },
+                                {
+                                    "name": "update apartment",
+                                    "request": {
+                                        "body": {
+                                            "formdata": [
+                                                {
+                                                    "key": "city_id",
+                                                    "type": "text",
+                                                    "value": ""
+                                                },
+                                                {
+                                                    "key": "title",
+                                                    "type": "text",
+                                                    "value": ""
+                                                },
+                                                {
+                                                    "key": "description",
+                                                    "type": "text",
+                                                    "value": ""
+                                                },
+                                                {
+                                                    "key": "price",
+                                                    "type": "text",
+                                                    "value": ""
+                                                },
+                                                {
+                                                    "key": "bathrooms",
+                                                    "type": "text",
+                                                    "value": ""
+                                                },
+                                                {
+                                                    "key": "bedrooms",
+                                                    "type": "text",
+                                                    "value": ""
+                                                },
+                                                {
+                                                    "key": "size",
+                                                    "type": "text",
+                                                    "value": ""
+                                                },
+                                                {
+                                                    "key": "has_pool",
+                                                    "type": "text",
+                                                    "value": ""
+                                                },
+                                                {
+                                                    "key": "has_wifi",
+                                                    "type": "text",
+                                                    "value": ""
+                                                },
+                                                {
+                                                    "key": "cover_image",
+                                                    "src": "",
+                                                    "type": "file"
+                                                },
+                                                {
+                                                    "key": "images",
+                                                    "src": "",
+                                                    "type": "file"
+                                                }
+                                            ],
+                                            "mode": "formdata"
+                                        },
+                                        "header": [
+                                            {
+                                                "disabled": false,
+                                                "key": "Accept",
+                                                "value": "{{Accept}}"
+                                            },
+                                            {
+                                                "disabled": false,
+                                                "key": "Authorization",
+                                                "value": "{{Authorization}}"
+                                            }
+                                        ],
+                                        "method": "PUT",
+                                        "url": {
+                                            "host": [
+                                                "{{host}}"
+                                            ],
+                                            "query": [],
+                                            "raw": "{{host}}http://127.0.0.1:8000/api/apartments/{apartment}"
+                                        }
+                                    }
+                                },
+                                {
+                                    "name": "show apartment",
+                                    "request": {
+                                        "body": {},
+                                        "header": [
+                                            {
+                                                "disabled": false,
+                                                "key": "Accept",
+                                                "value": "{{Accept}}"
+                                            },
+                                            {
+                                                "disabled": false,
+                                                "key": "Authorization",
+                                                "value": "{{Authorization}}"
+                                            }
+                                        ],
+                                        "method": "GET",
+                                        "url": {
+                                            "host": [
+                                                "{{host}}"
+                                            ],
+                                            "path": [
+                                                "api",
+                                                "apartments",
+                                                "{apartment}"
+                                            ],
+                                            "query": [],
+                                            "raw": "{{host}}/api/apartments/{apartment}"
+                                        }
+                                    }
+                                },
+                                {
+                                    "name": "remove favorite apartment",
+                                    "request": {
+                                        "body": {},
+                                        "header": [
+                                            {
+                                                "disabled": false,
+                                                "key": "Accept",
+                                                "value": "{{Accept}}"
+                                            },
+                                            {
+                                                "disabled": false,
+                                                "key": "Authorization",
+                                                "value": "{{Authorization}}"
+                                            }
+                                        ],
+                                        "method": "DELETE",
+                                        "url": {
+                                            "host": [
+                                                "{{host}}"
+                                            ],
+                                            "path": [
+                                                "api",
+                                                "apartments",
+                                                "favorite",
+                                                "remove",
+                                                "{apartment}"
+                                            ],
+                                            "query": [],
+                                            "raw": "{{host}}/api/apartments/favorite/remove/{apartment}"
+                                        }
+                                    }
+                                },
+                                {
+                                    "name": "add favorite apartment",
+                                    "request": {
+                                        "body": {},
+                                        "header": [
+                                            {
+                                                "disabled": false,
+                                                "key": "Accept",
+                                                "value": "{{Accept}}"
+                                            },
+                                            {
+                                                "disabled": false,
+                                                "key": "Authorization",
+                                                "value": "{{Authorization}}"
+                                            }
+                                        ],
+                                        "method": "POST",
+                                        "url": {
+                                            "host": [
+                                                "{{host}}"
+                                            ],
+                                            "path": [
+                                                "api",
+                                                "apartments",
+                                                "favorite",
+                                                "add",
+                                                "{apartment}"
+                                            ],
+                                            "query": [],
+                                            "raw": "{{host}}/api/apartments/favorite/add/{apartment}"
+                                        }
+                                    }
+                                },
+                                {
+                                    "name": "favorite apartments",
+                                    "request": {
+                                        "body": {},
+                                        "header": [
+                                            {
+                                                "disabled": false,
+                                                "key": "Accept",
+                                                "value": "{{Accept}}"
+                                            },
+                                            {
+                                                "disabled": false,
+                                                "key": "Authorization",
+                                                "value": "{{Authorization}}"
+                                            }
+                                        ],
+                                        "method": "GET",
+                                        "url": {
+                                            "host": [
+                                                "{{host}}"
+                                            ],
+                                            "path": [
+                                                "api",
+                                                "apartments",
+                                                "favorite"
+                                            ],
+                                            "query": [],
+                                            "raw": "{{host}}/api/apartments/favorite"
+                                        }
+                                    }
+                                },
+                                {
+                                    "name": "show my apartmetns",
+                                    "request": {
+                                        "body": {},
+                                        "header": [
+                                            {
+                                                "disabled": false,
+                                                "key": "Accept",
+                                                "value": "{{Accept}}"
+                                            },
+                                            {
+                                                "disabled": false,
+                                                "key": "Authorization",
+                                                "value": "{{Authorization}}"
+                                            }
+                                        ],
+                                        "method": "GET",
+                                        "url": {
+                                            "host": [
+                                                "{{host}}"
+                                            ],
+                                            "path": [
+                                                "api",
+                                                "apartments",
+                                                "my"
+                                            ],
+                                            "query": [],
+                                            "raw": "{{host}}/api/apartments/my"
+                                        }
+                                    }
+                                },
+                                {
+                                    "name": "store apartment",
+                                    "request": {
+                                        "body": {
+                                            "formdata": [
+                                                {
+                                                    "key": "city_id",
+                                                    "type": "text",
+                                                    "value": "1"
+                                                },
+                                                {
+                                                    "key": "title",
+                                                    "type": "text",
+                                                    "value": "no"
+                                                },
+                                                {
+                                                    "key": "description",
+                                                    "type": "text",
+                                                    "value": "o"
+                                                },
+                                                {
+                                                    "key": "price",
+                                                    "type": "text",
+                                                    "value": "12"
+                                                },
+                                                {
+                                                    "key": "bathrooms",
+                                                    "type": "text",
+                                                    "value": "12"
+                                                },
+                                                {
+                                                    "key": "bedrooms",
+                                                    "type": "text",
+                                                    "value": "12"
+                                                },
+                                                {
+                                                    "key": "size",
+                                                    "type": "text",
+                                                    "value": "12"
+                                                },
+                                                {
+                                                    "key": "has_pool",
+                                                    "type": "text",
+                                                    "value": "1"
+                                                },
+                                                {
+                                                    "key": "has_wifi",
+                                                    "type": "text",
+                                                    "value": "1"
+                                                },
+                                                {
+                                                    "key": "cover_image",
+                                                    "src": "/home/nour/Pictures/01.jpg",
+                                                    "type": "file"
+                                                }
+                                            ],
+                                            "mode": "formdata"
+                                        },
+                                        "header": [
+                                            {
+                                                "disabled": false,
+                                                "key": "Accept",
+                                                "value": "{{Accept}}"
+                                            },
+                                            {
+                                                "disabled": false,
+                                                "key": "Authorization",
+                                                "value": "{{Authorization}}"
+                                            }
+                                        ],
+                                        "method": "POST",
+                                        "url": {
+                                            "host": [
+                                                "{{host}}"
+                                            ],
+                                            "path": [
+                                                "api",
+                                                "apartments",
+                                                ""
+                                            ],
+                                            "query": [],
+                                            "raw": "{{host}}/api/apartments/"
+                                        }
+                                    }
+                                }
+                            ],
+                            "name": "apartments"
+                        },
+                        {
+                            "item": [
+                                {
+                                    "name": "show all chats",
+                                    "request": {
+                                        "body": {},
+                                        "header": [
+                                            {
+                                                "disabled": false,
+                                                "key": "Accept",
+                                                "value": "{{Accept}}"
+                                            },
+                                            {
+                                                "disabled": false,
+                                                "key": "Authorization",
+                                                "value": "{{Authorization}}"
+                                            }
+                                        ],
+                                        "method": "GET",
+                                        "url": {
+                                            "host": [
+                                                "{{host}}"
+                                            ],
+                                            "path": [
+                                                "api",
+                                                "chat",
+                                                ""
+                                            ],
+                                            "query": [],
+                                            "raw": "{{host}}/api/chat/"
+                                        }
+                                    }
+                                },
+                                {
+                                    "name": "send message",
+                                    "request": {
+                                        "body": {
+                                            "mode": "urlencoded",
+                                            "urlencoded": [
+                                                {
+                                                    "key": "receiver_id",
+                                                    "type": "text",
+                                                    "value": "1"
+                                                },
+                                                {
+                                                    "key": "message",
+                                                    "type": "text",
+                                                    "value": "hmm"
+                                                }
+                                            ]
+                                        },
+                                        "header": [
+                                            {
+                                                "disabled": false,
+                                                "key": "Accept",
+                                                "value": "{{Accept}}"
+                                            },
+                                            {
+                                                "disabled": false,
+                                                "key": "Authorization",
+                                                "value": "{{Authorization}}"
+                                            }
+                                        ],
+                                        "method": "POST",
+                                        "url": {
+                                            "host": [
+                                                "{{host}}"
+                                            ],
+                                            "query": [],
+                                            "raw": "{{host}}http://127.0.0.1:8000/api/chat/send"
+                                        }
+                                    }
+                                },
+                                {
+                                    "name": "show chat messages",
+                                    "request": {
+                                        "body": {},
+                                        "header": [
+                                            {
+                                                "disabled": false,
+                                                "key": "Accept",
+                                                "value": "{{Accept}}"
+                                            },
+                                            {
+                                                "disabled": false,
+                                                "key": "Authorization",
+                                                "value": "{{Authorization}}"
+                                            }
+                                        ],
+                                        "method": "GET",
+                                        "url": {
+                                            "host": [
+                                                "{{host}}"
+                                            ],
+                                            "path": [
+                                                "api",
+                                                "chat",
+                                                "{chat}"
+                                            ],
+                                            "query": [],
+                                            "raw": "{{host}}/api/chat/{chat}"
+                                        }
+                                    }
+                                },
+                                {
+                                    "name": "delete chat",
+                                    "request": {
+                                        "body": {},
+                                        "header": [
+                                            {
+                                                "disabled": false,
+                                                "key": "Accept",
+                                                "value": "{{Accept}}"
+                                            },
+                                            {
+                                                "disabled": false,
+                                                "key": "Authorization",
+                                                "value": "{{Authorization}}"
+                                            }
+                                        ],
+                                        "method": "DELETE",
+                                        "url": {
+                                            "host": [
+                                                "{{host}}"
+                                            ],
+                                            "path": [
+                                                "api",
+                                                "chat",
+                                                "{chat}"
+                                            ],
+                                            "query": [],
+                                            "raw": "{{host}}/api/chat/{chat}"
+                                        }
+                                    }
+                                },
+                                {
+                                    "name": "edit message",
+                                    "request": {
+                                        "body": {
+                                            "formdata": [
+                                                {
+                                                    "key": "message",
+                                                    "type": "text",
+                                                    "value": "fuck"
+                                                }
+                                            ],
+                                            "mode": "formdata"
+                                        },
+                                        "header": [
+                                            {
+                                                "disabled": false,
+                                                "key": "Accept",
+                                                "value": "{{Accept}}"
+                                            },
+                                            {
+                                                "disabled": false,
+                                                "key": "Authorization",
+                                                "value": "{{Authorization}}"
+                                            }
+                                        ],
+                                        "method": "PATCH",
+                                        "url": {
+                                            "host": [
+                                                "{{host}}"
+                                            ],
+                                            "query": [],
+                                            "raw": "{{host}}http://127.0.0.1:8000/api/message/{message}"
+                                        }
+                                    }
+                                },
+                                {
+                                    "name": "delete message",
+                                    "request": {
+                                        "body": {},
+                                        "header": [
+                                            {
+                                                "disabled": false,
+                                                "key": "Accept",
+                                                "value": "{{Accept}}"
+                                            },
+                                            {
+                                                "disabled": false,
+                                                "key": "Authorization",
+                                                "value": "{{Authorization}}"
+                                            }
+                                        ],
+                                        "method": "DELETE",
+                                        "url": {
+                                            "host": [
+                                                "{{host}}"
+                                            ],
+                                            "query": [],
+                                            "raw": "{{host}}http://127.0.0.1:8000/api/message/{message}"
+                                        }
+                                    }
+                                },
+                                {
+                                    "name": "read message",
+                                    "request": {
+                                        "body": {},
+                                        "header": [
+                                            {
+                                                "disabled": false,
+                                                "key": "Accept",
+                                                "value": "{{Accept}}"
+                                            },
+                                            {
+                                                "disabled": false,
+                                                "key": "Authorization",
+                                                "value": "{{Authorization}}"
+                                            }
+                                        ],
+                                        "method": "PATCH",
+                                        "url": {
+                                            "host": [
+                                                "{{host}}"
+                                            ],
+                                            "path": [
+                                                "api",
+                                                "message",
+                                                "{message}",
+                                                "read"
+                                            ],
+                                            "query": [],
+                                            "raw": "{{host}}/api/message/{message}/read"
+                                        }
+                                    }
+                                }
+                            ],
+                            "name": "chats"
+                        },
+                        {
+                            "item": [
+                                {
+                                    "name": "index",
+                                    "request": {
+                                        "body": {},
+                                        "header": [
+                                            {
+                                                "disabled": false,
+                                                "key": "Accept",
+                                                "value": "{{Accept}}"
+                                            },
+                                            {
+                                                "disabled": false,
+                                                "key": "Authorization",
+                                                "value": "{{Authorization}}"
+                                            }
+                                        ],
+                                        "method": "GET",
+                                        "url": {
+                                            "host": [
+                                                "{{host}}"
+                                            ],
+                                            "path": [
+                                                "api",
+                                                "governorates",
+                                                ""
+                                            ],
+                                            "query": [],
+                                            "raw": "{{host}}/api/governorates/"
+                                        }
+                                    }
+                                },
+                                {
+                                    "name": "show",
+                                    "request": {
+                                        "body": {},
+                                        "header": [
+                                            {
+                                                "disabled": false,
+                                                "key": "Accept",
+                                                "value": "{{Accept}}"
+                                            },
+                                            {
+                                                "disabled": false,
+                                                "key": "Authorization",
+                                                "value": "{{Authorization}}"
+                                            }
+                                        ],
+                                        "method": "GET",
+                                        "url": {
+                                            "host": [
+                                                "{{host}}"
+                                            ],
+                                            "path": [
+                                                "api",
+                                                "governorates",
+                                                "{governorate}"
+                                            ],
+                                            "query": [],
+                                            "raw": "{{host}}/api/governorates/{governorate}"
+                                        }
+                                    }
+                                }
+                            ],
+                            "name": "governorates"
+                        }
+                    ],
+                    "name": "Project"
+                },
+                {
+                    "item": [
+                        {
+                            "item": [
+                                {
+                                    "name": "get notifications",
+                                    "request": {
+                                        "body": {},
+                                        "header": [
+                                            {
+                                                "disabled": false,
+                                                "key": "Accept",
+                                                "value": "{{Accept}}"
+                                            },
+                                            {
+                                                "disabled": false,
+                                                "key": "Authorization",
+                                                "value": "{{Authorization}}"
+                                            }
+                                        ],
+                                        "method": "GET",
+                                        "url": {
+                                            "host": [
+                                                "{{host}}"
+                                            ],
+                                            "path": [
+                                                "api",
+                                                "user",
+                                                "notifications"
+                                            ],
+                                            "query": [],
+                                            "raw": "{{host}}/api/user/notifications"
+                                        }
+                                    }
+                                },
+                                {
+                                    "name": "read notification",
+                                    "request": {
+                                        "body": {},
+                                        "header": [
+                                            {
+                                                "disabled": false,
+                                                "key": "Accept",
+                                                "value": "{{Accept}}"
+                                            },
+                                            {
+                                                "disabled": false,
+                                                "key": "Authorization",
+                                                "value": "{{Authorization}}"
+                                            }
+                                        ],
+                                        "method": "POST",
+                                        "url": {
+                                            "host": [
+                                                "{{host}}"
+                                            ],
+                                            "path": [
+                                                "api",
+                                                "user",
+                                                "notifications",
+                                                "{id}",
+                                                "read"
+                                            ],
+                                            "query": [],
+                                            "raw": "{{host}}/api/user/notifications/{id}/read"
+                                        }
+                                    }
+                                }
+                            ],
+                            "name": "php"
+                        }
+                    ],
+                    "name": "staybay-backend"
+                }
+            ],
+            "name": "Root"
+        }
+    ],
+    "variable": [
+        {
+            "key": "host",
+            "value": "http://127.0.0.1:8000"
+        },
+        {
+            "key": "Accept",
+            "value": "application/json"
+        },
+        {
+            "key": "Authorization",
+            "value": "Bearer 1|W2MUw0LtRuVcKiaMzWcmV4aQj8Eor8fJBlydMk4m905bd9e3"
+        }
+    ]
+}

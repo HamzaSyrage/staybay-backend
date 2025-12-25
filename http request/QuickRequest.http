@@ -134,7 +134,7 @@ Content-Disposition: form-data; name="price"
 
 120
 --WebAppBoundary
-Content-Disposition: form-data; name="rooms"
+Content-Disposition: form-data; name="bathrooms"
 
 3
 --WebAppBoundary

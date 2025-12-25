@@ -23,7 +23,7 @@ return new class extends Migration {
             $table->text('description');
             $table->float('price');
             $table->float('rating')->default(0);
-            $table->integer('rooms');
+            $table->integer('bathrooms');
             $table->integer('bedrooms');
             $table->integer('size');
             $table->boolean('has_pool');

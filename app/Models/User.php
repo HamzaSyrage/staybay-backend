@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\HasApiTokens;
 // use Spatie\Permission\Traits\HasRoles;
 // use Spatie\Permission\Traits\HasPermissions;
@@ -69,5 +70,19 @@ class User extends Authenticatable
     public function favoriteApartments()
     {
         return $this->belongsToMany(Apartment::class, 'favorite_apartments');
+    }
+
+
+    public function transferBalanceTo(User $receiver, float $amount)
+    {
+        if ($this->balance < $amount) {
+            abort(422, 'You do not have enough balance for this transfer.');
+        }
+
+        $this->balance -= $amount;
+        $this->save();
+
+        $receiver->balance += $amount;
+        $receiver->save();
     }
 }
