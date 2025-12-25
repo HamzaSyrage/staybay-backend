@@ -22,11 +22,20 @@ class NotificationController extends Controller
             ->notifications()
             ->where('id', $id)
             ->firstOrFail();
-
+//        dd("fuck".$notification);
         $notification->markAsRead();
 
         return response()->json([
-            'message' => 'Notification marked as read'
+            'message' => 'Notification marked as read',
+            'code' => 200
         ]);
+    }
+    public function markAllAsRead()
+    {
+        auth()->user()
+            ->unreadNotifications
+            ->markAsRead();
+
+        return response()->noContent();
     }
 }
