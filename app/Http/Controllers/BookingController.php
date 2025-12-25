@@ -15,7 +15,13 @@ use Illuminate\Http\Request;
 
 class BookingController extends Controller
 {
-    /**
+    public function apartmentNotAvailableIn($id)
+    {
+        return Booking::where('apartment_id', $id)
+            ->whereIn('status', ['pending', 'approved', 'rejected', 'cancelled', 'completed','request_cancel','request_edit'])
+            ->where('start_date', '>=', Carbon::now())
+            ->get(['start_date', 'end_date']);
+    }    /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
