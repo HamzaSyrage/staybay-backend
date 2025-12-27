@@ -308,24 +308,15 @@ class BookingController extends Controller
     {
         $user = $request->user();
 
-        if ($booking->user_id !== $user->id) {
-            abort(403, 'You are not allowed to rate this booking.');
-        }
-
-//        if ($booking->rated_at !== null) {
-//            abort(422, 'Booking already rated.');
-//        }
-
-        if ($booking->status !== 'completed') {
-            abort(422, 'Booking must be completed before rating.');
-        }
-
         $validated = $request->validated();
-        $booking->update([
-            'rating' => $validated['rating'],
-            'rated_at' => Carbon::now(),
-        ]);
-        $booking->apartment->reCalculateRating();
+        DB::transaction(function () use ($booking, $validated) {
+            $booking->update([
+                'rating' => $validated['rating'],
+                'rated_at' => Carbon::now(),
+            ]);
+            $booking->apartment->reCalculateRating();
+        });
+        $booking->refresh();
         return response()->json([
             'status' => 200,
             'message' => 'Booking rated successfully.',

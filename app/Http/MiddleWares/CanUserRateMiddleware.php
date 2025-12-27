@@ -31,9 +31,9 @@ class CanUserRateMiddleware
             abort(422, 'Booking must be finished to rate it.');
         }
 
-        if ($booking->rated_at !== null) {
-            abort(422, 'Booking has already been rated.');
-        }
+        // if ($booking->rated_at !== null) {
+        //     abort(422, 'Booking has already been rated.');
+        // }
 
         return $next($request);
     }
