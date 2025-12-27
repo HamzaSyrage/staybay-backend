@@ -271,22 +271,22 @@ class BookingController extends Controller
     {
         $user = $request->user();
 
-        if ($booking->user_id !== $user->id) {
-            abort(403, 'You are not allowed to pay for this booking.');
-        }
+        // if ($booking->user_id !== $user->id) {
+        //     abort(403, 'You are not allowed to pay for this booking.');
+        // }
 
-        if ($booking->status !== 'approved') {
-            abort(422, 'Booking must be approved before payment.');
-        }
+        // if ($booking->status !== 'approved') {
+        //     abort(422, 'Booking must be approved before payment.');
+        // }
 
-        if ($booking->paid_at) {
-            abort(422, 'Booking already paid.');
-        }
+        // if ($booking->paid_at) {
+        //     abort(422, 'Booking already paid.');
+        // }
 
         $owner = $booking->apartment->user;
-        if (!$owner) {
-            abort(422, 'Apartment owner not found.');
-        }
+        // if (!$owner) {
+        //     abort(422, 'Apartment owner not found.');
+        // }
 
         DB::transaction(function () use ($user, $owner, $booking) {
             $user->transferBalanceTo($owner, $booking->total_price);
