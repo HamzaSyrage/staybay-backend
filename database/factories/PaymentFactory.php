@@ -19,8 +19,8 @@ class PaymentFactory extends Factory
         return [
             'booking_id' => \App\Models\Booking::factory(),
             'amount' => $this->faker->randomFloat(2, 10, 1000),
-            'method' => $this->faker->randomElement(['cash', 'visa']),
-            'status' => $this->faker->randomElement(['pending', 'completed', 'failed']),
+            // 'method' => $this->faker->randomElement(['cash', 'visa']),
+            'status' => $this->faker->randomElement(['hold', 'completed', 'refunded']),
             'payment_date' => $this->faker->dateTimeBetween('-1 year', 'now'),
         ];
     }

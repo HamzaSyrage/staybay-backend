@@ -76,26 +76,20 @@ class Apartment extends Model
             ->count();
     }
 
-    public function isAvailable(
-        Carbon $start,
-        Carbon $end,
-        ?int $BookingId = null
-    ): bool {
+    public function isAvailable(Carbon $start, Carbon $end, ?int $BookingId = null): bool
+    {
         return !$this->bookings()
-            ->when($BookingId, function ($q) use ($BookingId) {
-                $q->where('id', '!=', $BookingId);
-            })
+            ->when($BookingId, fn($q) => $q->where('id', '!=', $BookingId))
+            ->whereNotIn('status', ['rejected', 'cancelled'])
             ->where(function ($query) use ($start, $end) {
-                $query
-                    ->whereBetween('start_date', [$start, $end])
-                    ->orWhereBetween('end_date', [$start, $end])
-                    ->orWhere(function ($q) use ($start, $end) {
-                        $q->where('start_date', '<=', $start)
-                            ->where('end_date', '>=', $end);
-                    });
+                $query->where('start_date', '<=', $end)
+                    ->where('end_date', '>=', $start);
             })
             ->exists();
     }
+
+
+
     public function reCalculateRating(){
         $query = $this->bookings()->whereNotNull('rating');
         $this->rating = $query->avg('rating');

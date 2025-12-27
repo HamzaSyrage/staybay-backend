@@ -14,6 +14,11 @@ class BookingResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $payments = $this->whenLoaded('payments') ?? $this->payments;
+
+        $holdAmount = $payments->sum('amount') ?? 0;
+        $completedAmount = $payments->sum('amount') ?? 0;
+
         return [
             'id' => $this->id,
             'user_id' => $this->user_id,
@@ -25,11 +30,12 @@ class BookingResource extends JsonResource
             'total_price' => $this->total_price,
             'rating' => $this->rating,
             'rated_at' => $this->rated_at,
-            'user_can_rate' => $this->rated_at === null && $this->status === 'finished',
-            'is_paid' => isset($this->paid_at),
-            'paid_at' => $this->paid_at,
+            'user_can_rate' => $this->status === 'finished',
+            'is_paid' => $completedAmount >= $this->total_price,
+            'can_user_pay' => ($holdAmount + $completedAmount) < $this->total_price && $this->status === 'approved',
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
     }
+
 }

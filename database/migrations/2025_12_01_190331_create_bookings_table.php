@@ -18,12 +18,13 @@ return new class extends Migration {
             $table->foreignIdFor(Apartment::class)->constrained()->onDelete('cascade');
             $table->date('start_date');
             $table->date('end_date');
-            $table->enum('status', ['pending', 'approved', 'rejected', 'cancelled', 'completed', 'finished'])->default('pending');
+            $table->enum('status', ['pending', 'approved', 'rejected', 'cancelled', 'completed', 'started', 'finished', 'failed'])->default('pending');
+            // $table->float('paid_amount')->default(0.0);
             $table->float('total_price');
             $table->float('rating')->nullable();
             $table->dateTime('rated_at')->nullable();
             // $table->boolean('is_paid')->default(false);
-            $table->dateTime('paid_at')->nullable();
+            // $table->dateTime('paid_at')->nullable();
             $table->foreignId('prev_id')
                 ->nullable()
                 ->constrained('bookings')

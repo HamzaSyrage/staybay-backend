@@ -12,9 +12,16 @@ class UpdateOwnerBookingRequest extends FormRequest
     public function authorize(): bool
     {
         $booking = $this->route('booking');
-        return $booking && $this->user()->id === $booking->apartment->user_id && $booking->status === 'pending';
-        // return $booking && $this->user()->id === $booking->user_id;
+        $notOkStatus = in_array($booking->status, [
+            'rejected',
+            'cancelled',
+            'finished',
+            'started',
+            'failed',
+        ]);
 
+        // return $booking && $this->user()->id === $booking->user_id;
+        return $booking && $this->user()->id === $booking->apartment->user_id && !$notOkStatus;
     }
 
     /**

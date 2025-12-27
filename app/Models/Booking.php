@@ -19,7 +19,8 @@ class Booking extends Model
         'status',
         'rating',
         'rated_at',
-        'paid_at',
+        // 'paid_at',
+        // 'paid_amount',
     ];
     public function user()
     {
@@ -29,10 +30,11 @@ class Booking extends Model
     {
         return $this->belongsTo(Apartment::class);
     }
-    public function payment()
+    public function payments()
     {
-        return $this->hasOne(Payment::class);
+        return $this->hasMany(Payment::class);
     }
+
     public function CalculatePrice(){
         return (date_diff(Carbon::parse($this->start_date), Carbon::parse($this->end_date))->days + 1) * $this->apartment->price;
     }

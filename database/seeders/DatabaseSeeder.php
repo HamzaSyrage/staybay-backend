@@ -200,14 +200,14 @@ class DatabaseSeeder extends Seeder
                 $users->random(3)->pluck('id')
             );
 
-            Booking::factory(10)->create([
-                'apartment_id' => $apartment->id,
-                'user_id' => $users->random()->id,
-            ])->each(function ($booking) {
-                Payment::factory()->create([
-                    'booking_id' => $booking->id,
-                ]);
-            });
+            // Booking::factory(10)->create([
+            //     'apartment_id' => $apartment->id,
+            //     'user_id' => $users->random()->id,
+            // ])->each(function ($booking) {
+            //     Payment::factory()->create([
+            //         'booking_id' => $booking->id,
+            //     ]);
+            // });
         });
     }
 }

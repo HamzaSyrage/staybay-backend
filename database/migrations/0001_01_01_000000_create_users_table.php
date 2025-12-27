@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('first_name');
             $table->string('last_name');
             $table->float('balance')->default(10000.0);
+            $table->float('hold_balance')->default(0);
             $table->string('avatar')->nullable();
             $table->string('id_card');
             $table->date('birth_date');

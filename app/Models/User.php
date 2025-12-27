@@ -72,7 +72,22 @@ class User extends Authenticatable
         return $this->belongsToMany(Apartment::class, 'favorite_apartments');
     }
 
+    public function transferOnHoldTo(User $receiver, float $amount)
+    {
+        if ($this->balance < $amount) {
+            abort(422, 'You do not have enough balance for this transfer.');
+        }
 
+        $this->balance -= $amount;
+        $this->hold_balance += $amount;
+
+        $this->save();
+
+        // $receiver->balance += $amount;
+        $receiver->hold_balance += $amount;
+
+        $receiver->save();
+    }
     public function transferBalanceTo(User $receiver, float $amount)
     {
         if ($this->balance < $amount) {

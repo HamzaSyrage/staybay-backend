@@ -10,7 +10,6 @@ use App\Http\Requests\UpdateBookingRequest;
 use App\Http\Requests\UpdateOwnerBookingRequest;
 use App\Http\Resources\BookingResource;
 use App\Models\Apartment;
-use App\Models\User;
 use App\Services\NotificationService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -21,7 +20,7 @@ class BookingController extends Controller
     public function apartmentNotAvailableIn($id)
     {
         return Booking::where('apartment_id', $id)
-            ->whereIn('status', [ 'approved', 'completed'])
+            ->whereIn('status', ['approved', 'completed'])
             ->where('start_date', '>=', Carbon::now())
             ->get(['start_date', 'end_date']);
     }
@@ -30,18 +29,30 @@ class BookingController extends Controller
      */
     public function index(Request $request)
     {
-        $bookings = Booking::with(['apartment.user', 'apartment.city', 'apartment.governorate', 'apartment.images'])
+        $bookings = Booking::with([
+            'apartment.user',
+            'apartment.city',
+            'apartment.governorate',
+            'apartment.images',
+            'payments'
+        ])
             ->where('user_id', $request->user()->id)
+            ->whereNotIn('id', function ($query) {
+                $query->select('prev_id')
+                    ->from('bookings')
+                    ->whereNotNull('prev_id');
+            })
             ->get();
 
         return BookingResource::collection($bookings)
             ->additional([
                 'status' => 200,
-                'message' => 'your Bookings fetched successfully.',
+                'message' => 'Your bookings fetched successfully.',
             ])
             ->response()
             ->setStatusCode(200);
     }
+
     public function own(Request $request)
     {
         $ownerId = $request->user()->id;
@@ -50,10 +61,16 @@ class BookingController extends Controller
             'apartment.user',
             'apartment.city',
             'apartment.governorate',
-            'apartment.images'
+            'apartment.images',
+            'payments'
         ])
             ->whereHas('apartment', function ($query) use ($ownerId) {
                 $query->where('user_id', $ownerId);
+            })
+            ->whereNotIn('id', function ($query) {
+                $query->select('prev_id')
+                    ->from('bookings')
+                    ->whereNotNull('prev_id');
             })
             ->get();
 
@@ -67,34 +84,45 @@ class BookingController extends Controller
     }
 
 
+
     /**
      * Store a newly created resource in storage.
      */
     public function store(StoreBookingRequest $request)
     {
         $validated = $request->validated();
-
         $user = $request->user();
 
         $apartment = Apartment::findOrFail($validated['apartment_id']);
+        $start = Carbon::parse($validated['start_date']);
+        $end = Carbon::parse($validated['end_date']);
 
-        $start = $validated['start_date'];
-        $end = $validated['end_date'];
+        $booking = DB::transaction(function () use ($apartment, $user, $start, $end) {
 
-        if (!$apartment->isAvailable(Carbon::parse($start), Carbon::parse($end))) {
+            $existing = $apartment->bookings()
+                ->whereNotIn('status', ['rejected', 'cancelled'])
+                ->where(function ($query) use ($start, $end) {
+                    $query->where('start_date', '<=', $end)
+                        ->where('end_date', '>=', $start);
+                })
+                ->lockForUpdate()
+                ->exists();
+
+            if ($existing) {
             abort(422, 'The apartment is not available for the selected dates.');
-        }
-        // start - end +1 * apartment price
-        $totalPrice = (date_diff(Carbon::parse($start), Carbon::parse($end))->days + 1) * $apartment->price;
+            }
 
+            $totalPrice = ($start->diffInDays($end) + 1) * $apartment->price;
 
-        $booking = $apartment->bookings()->create([
+            return $apartment->bookings()->create([
             'user_id' => $user->id,
             'start_date' => $start,
             'end_date' => $end,
             'total_price' => $totalPrice,
             'status' => 'pending',
         ]);
+        });
+
         NotificationService::sendNotification(
             $apartment->user,
             'New booking needs your approval',
@@ -104,14 +132,10 @@ class BookingController extends Controller
                 'type' => 'booking_approval',
             ]
         );
+
         $booking->refresh();
 
-        // return response()->json([
-        //     'status' => 201,
-        //     'message' => 'Booking created successfully.',
-        //     'data' => BookingResource::make($booking->load(['apartment'])),
-        // ], 201);
-        return BookingResource::collection($booking->load(['apartment']))
+        return BookingResource::make($booking->load(['apartment', 'payments']))
             ->additional([
                 'status' => 201,
                 'message' => 'Booking created successfully.',
@@ -119,6 +143,7 @@ class BookingController extends Controller
             ->response()
             ->setStatusCode(201);
     }
+
 
 
     /**
@@ -137,19 +162,12 @@ class BookingController extends Controller
         $validated = $request->validated();
         $user = $request->user();
         $apartment = $booking->apartment;
-//        $new_booking = $booking;
         $new_booking = null;
-        if (($validated['status'] ?? null) === 'cancelled') {
-            $booking->update([
-                'status' => 'cancelled',
-            ]);
 
-            // return response()->json([
-            //     'status' => 200,
-            //     'message' => 'Booking cancelled successfully.',
-            //     'data' => BookingResource::make($booking),
-            // ]);
-            return BookingResource::collection($booking->load(['apartment']))
+        if (isset($validated['status']) && $validated['status'] === 'cancelled') {
+            $booking->update(['status' => $validated['status']]);
+
+            return BookingResource::make($booking->load(['apartment']))
                 ->additional([
                     'status' => 200,
                     'message' => 'Booking cancelled successfully.',
@@ -158,145 +176,155 @@ class BookingController extends Controller
                 ->setStatusCode(200);
         }
 
-        if (isset($validated['start_date'], $validated['end_date'])) {
 
+        if ($booking->status === 'approved' && isset($validated['start_date'], $validated['end_date'])) {
             $start = Carbon::parse($validated['start_date']);
             $end = Carbon::parse($validated['end_date']);
 
-            if (
-                !$apartment->isAvailable($start, $end, $booking->id ?? null)
-            ) {
+            if (!$apartment->isAvailable($start, $end, $booking->id)) {
                 abort(422, 'The apartment is not available for the selected dates.');
             }
 
             $totalPrice = ($start->diffInDays($end) + 1) * $apartment->price;
 
-            $new_booking = $apartment->Bookings()->create([
+            $new_booking = $apartment->bookings()->create([
                 'user_id' => $user->id,
                 'start_date' => $start,
                 'end_date' => $end,
                 'total_price' => $totalPrice,
-                'status' => 'pending',
+                'prev_id' => $booking->id,
             ]);
 
             NotificationService::sendNotification(
                 $apartment->user,
                 response()->json([
-                    'message' => 'booking needs approval',
-                    'code' => '200',
+                    'message' => 'Booking needs approval',
                     'user' => $user,
                     'apartment' => $apartment,
                     'old_booking' => $booking,
                     'new_booking' => $new_booking,
                 ])
             );
+        } else {
+
+            $booking->update($validated);
         }
 
         return response()->json([
             'status' => 200,
             'message' => 'Booking updated successfully.',
-            'data' =>
-//                BookingResource::make($new_booking->load('apartment'))
-                [
-                'booking' => BookingResource::make($booking->load('apartment')),
-            'new_booking' => BookingResource::make($new_booking->load('apartment')),
+            'data' => [
+                'booking' => BookingResource::make($booking->load(['apartment', 'payments'])),
+                'new_booking' => $new_booking ? BookingResource::make($new_booking->load(['apartment', 'payments'])) : null,
             ],
         ]);
     }
 
-    public function owner_update(
-        UpdateOwnerBookingRequest $request,
-        int $booking_id
-    ) {
-        $edited_booking = Booking::where('prev_id', $booking_id)->first();
-        $booking = Booking::findOrFail($booking_id);
-        if ($booking->status === 'cancelled') {
-            abort(422, 'Cancelled bookings cannot be approved or rejected.');
-        }
+
+    public function owner_update(UpdateOwnerBookingRequest $request, Booking $booking)
+    {
+        $editedBooking = Booking::where('prev_id', $booking->id)->first();
         $validated = $request->validated();
-        $status = $booking->status;
-        $booking->update([
-            'status' => $validated['status'],
-        ]);
-        if(isset($edited_booking)){
+
+        DB::transaction(function () use ($booking, $editedBooking, $validated) {
+
+            $booking->update(['status' => $validated['status']]);
+
+            if (!$editedBooking) {
+                return;
+            }
+
+            $user = $editedBooking->user;
+            $owner = $editedBooking->apartment->user;
+
             if ($validated['status'] === 'approved') {
-                $payed_money = 0;
-                if(isset($booking->paid_at))
-                    $payed_money = $booking->total_price;
-                $booking->delete();
-                $edited_booking->id = $edited_booking->prev_id;
-                $edited_booking->prev_id = null;
-                $edited_booking->total_price = Booking::calculatePrice() - $payed_money;
-                $edited_booking->paid_at = null;
-                $edited_booking->save();
-                $booking = $edited_booking;
+                $refunded = 0;
+                foreach ($booking->payments as $payment) {
+                    $refunded += $payment->amount;
+                    $payment->update([
+                        'status' => 'refunded',
+                        'payment_date' => now(),
+                    ]);
+                }
+
+                $user->hold_balance -= $refunded;
+                $owner->hold_balance -= $refunded;
+                $user->save();
+                $owner->save();
+
+                $price = $editedBooking->total_price;
+
+                $amountToHold = min($refunded, $price);
+                if ($amountToHold > 0) {
+                    $editedBooking->payments()->create([
+                        'amount' => $amountToHold,
+                        'status' => 'hold',
+                        'payment_date' => now(),
+                    ]);
+                    $user->transferOnHoldTo($owner, $amountToHold);
             }
-            elseif ($validated['status'] === 'rejected') {
-                $edited_booking->delete();
-                $booking->update([
-                    'status'=>$status,
+
+                if ($refunded < $price) {
+                    $editedBooking->update([
+                        'total_price' => $price - $refunded,
                 ]);
+                } elseif ($refunded > $price) {
+                    $overflow = $refunded - $price;
+                    $user->balance += $overflow;
+                    $user->save();
             }
+
+                $editedBooking->prev_id = null;
+                $editedBooking->save();
+
+                $booking->delete();
+
+            } elseif ($validated['status'] === 'rejected') {
+                $editedBooking->delete();
+                $booking->update(['status' => 'pending']);
         }
+        });
 
         NotificationService::sendNotification(
-            $booking->user,
+            $editedBooking->user ?? $booking->user,
             'Your booking was ' . $validated['status'],
             [
-                'booking_id' => $booking->id,
-                'apartment_id' => $booking->apartment_id,
-                'status' => $validated['status'],
+                'booking_id' => $editedBooking->id ?? $booking->id,
+                'apartment_id' => $editedBooking->apartment_id ?? $booking->apartment_id,
                 'type' => 'booking_status_update',
             ]
         );
 
-        // return response()->json([
-        //     'status' => 200,
-        //     'message' => 'Booking status updated successfully.',
-        //     'data' => BookingResource::make(
-        //         $booking->load(['apartment'])
-        //     ),
-        // ]);
-        return BookingResource::collection($booking->load(['apartment']))
-            ->additional([
-                    'status' => 200,
-                    'message' => 'Booking status updated successfully.',
-                ])
-            ->response()
-            ->setStatusCode(200);
-    }
+        $currentBooking = $editedBooking ?? $booking;
+        $currentBooking->refresh();
 
+        return BookingResource::make(
+            $currentBooking->load(['apartment', 'payments'])
+        )->additional([
+                    'status' => 200,
+                    'message' => 'Booking updated successfully.',
+                ])->response();
+    }
 
     public function pay(Booking $booking, PayBookingRequest $request)
     {
         $user = $request->user();
-
-        // if ($booking->user_id !== $user->id) {
-        //     abort(403, 'You are not allowed to pay for this booking.');
-        // }
-
-        // if ($booking->status !== 'approved') {
-        //     abort(422, 'Booking must be approved before payment.');
-        // }
-
-        // if ($booking->paid_at) {
-        //     abort(422, 'Booking already paid.');
-        // }
-
         $owner = $booking->apartment->user;
-        // if (!$owner) {
-        //     abort(422, 'Apartment owner not found.');
-        // }
+
+        if (!($user->balance >= $booking->total_price)) {
+            abort(422, 'You do not have enough balance for this transfer.');
+        }
 
         DB::transaction(function () use ($user, $owner, $booking) {
-            $user->transferBalanceTo($owner, $booking->total_price);
 
-            $booking->paid_at = now();
-            $booking->status = 'completed';
-            $booking->save();
+            $payments = $booking->payments()->create([
+                'amount' => $booking->total_price,
+                'status' => 'hold',
+                'payment_date' => now(),
+            ]);
+
+            $user->transferOnHoldTo($owner, $booking->total_price);
         });
-
-        $booking->refresh();
 
         NotificationService::sendNotification(
             $user,
@@ -317,20 +345,16 @@ class BookingController extends Controller
                 'type' => 'payment_received',
             ]
         );
-
-        // return response()->json([
-        //     'status' => 200,
-        //     'message' => 'Payment completed successfully.',
-        //     'data' => BookingResource::make($booking->load(['apartment'])),
-        // ]);
-        return BookingResource::collection($booking->load(['apartment']))
+        $booking->refresh();
+        return BookingResource::make($booking->load(['apartment', 'payments']))
             ->additional([
-                    'status' => 200,
-                    'message' => 'Payment completed successfully.',
-                ])
+                'status' => 200,
+                'message' => 'Payment placed on hold successfully. It will be released to the owner when the booking starts.',
+            ])
             ->response()
             ->setStatusCode(200);
     }
+
 
     public function rate(Booking $booking, RatingBookingRequest $request)
     {
@@ -345,16 +369,12 @@ class BookingController extends Controller
             $booking->apartment->reCalculateRating();
         });
         $booking->refresh();
-        // return response()->json([
-        //     'status' => 200,
-        //     'message' => 'Booking rated successfully.',
-        //     'data' => BookingResource::make($booking),
-        // ]);
-        return BookingResource::collection($booking->load(['apartment']))
+
+        return BookingResource::make($booking->load(['apartment']))
             ->additional([
-                    'status' => 200,
-                    'message' => 'Booking rated successfully.',
-                ])
+                'status' => 200,
+                'message' => 'Booking rated successfully.',
+            ])
             ->response()
             ->setStatusCode(200);
     }

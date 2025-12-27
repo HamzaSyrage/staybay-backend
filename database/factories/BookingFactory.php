@@ -26,7 +26,7 @@ class BookingFactory extends Factory
             'rating' => null,
             'rated_at' => null,
             // 'is_paid' => $this->faker->boolean(),
-            'paid_at' => null,
+            // 'paid_at' => null,
         ];
     }
 }
