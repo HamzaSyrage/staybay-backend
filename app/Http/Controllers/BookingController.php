@@ -219,7 +219,7 @@ class BookingController extends Controller
             'status' => $validated['status'],
         ]);
         if(isset($edited_booking)){
-            if ($validated['status'] === 'accepted') {
+            if ($validated['status'] === 'approved') {
                 $payed_money = 0;
                 if(isset($booking->paid_at))
                     $payed_money = $booking->total_price;
