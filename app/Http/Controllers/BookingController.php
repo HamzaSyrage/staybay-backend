@@ -106,11 +106,18 @@ class BookingController extends Controller
         );
         $booking->refresh();
 
-        return response()->json([
-            'status' => 201,
-            'message' => 'Booking created successfully.',
-            'data' => BookingResource::make($booking->load(['apartment'])),
-        ], 201);
+        // return response()->json([
+        //     'status' => 201,
+        //     'message' => 'Booking created successfully.',
+        //     'data' => BookingResource::make($booking->load(['apartment'])),
+        // ], 201);
+        return BookingResource::collection($booking->load(['apartment']))
+            ->additional([
+                'status' => 201,
+                'message' => 'Booking created successfully.',
+            ])
+            ->response()
+            ->setStatusCode(201);
     }
 
 
@@ -137,11 +144,18 @@ class BookingController extends Controller
                 'status' => 'cancelled',
             ]);
 
-            return response()->json([
-                'status' => 200,
-                'message' => 'Booking cancelled successfully.',
-                'data' => BookingResource::make($booking),
-            ]);
+            // return response()->json([
+            //     'status' => 200,
+            //     'message' => 'Booking cancelled successfully.',
+            //     'data' => BookingResource::make($booking),
+            // ]);
+            return BookingResource::collection($booking->load(['apartment']))
+                ->additional([
+                    'status' => 200,
+                    'message' => 'Booking cancelled successfully.',
+                ])
+                ->response()
+                ->setStatusCode(200);
         }
 
         if (isset($validated['start_date'], $validated['end_date'])) {
@@ -236,13 +250,20 @@ class BookingController extends Controller
             ]
         );
 
-        return response()->json([
-            'status' => 200,
-            'message' => 'Booking status updated successfully.',
-            'data' => BookingResource::make(
-                $booking->load(['apartment'])
-            ),
-        ]);
+        // return response()->json([
+        //     'status' => 200,
+        //     'message' => 'Booking status updated successfully.',
+        //     'data' => BookingResource::make(
+        //         $booking->load(['apartment'])
+        //     ),
+        // ]);
+        return BookingResource::collection($booking->load(['apartment']))
+            ->additional([
+                    'status' => 200,
+                    'message' => 'Booking status updated successfully.',
+                ])
+            ->response()
+            ->setStatusCode(200);
     }
 
 
@@ -297,11 +318,18 @@ class BookingController extends Controller
             ]
         );
 
-        return response()->json([
-            'status' => 200,
-            'message' => 'Payment completed successfully.',
-            'data' => BookingResource::make($booking->load(['apartment'])),
-        ]);
+        // return response()->json([
+        //     'status' => 200,
+        //     'message' => 'Payment completed successfully.',
+        //     'data' => BookingResource::make($booking->load(['apartment'])),
+        // ]);
+        return BookingResource::collection($booking->load(['apartment']))
+            ->additional([
+                    'status' => 200,
+                    'message' => 'Payment completed successfully.',
+                ])
+            ->response()
+            ->setStatusCode(200);
     }
 
     public function rate(Booking $booking, RatingBookingRequest $request)
@@ -317,10 +345,17 @@ class BookingController extends Controller
             $booking->apartment->reCalculateRating();
         });
         $booking->refresh();
-        return response()->json([
-            'status' => 200,
-            'message' => 'Booking rated successfully.',
-            'data' => BookingResource::make($booking),
-        ]);
+        // return response()->json([
+        //     'status' => 200,
+        //     'message' => 'Booking rated successfully.',
+        //     'data' => BookingResource::make($booking),
+        // ]);
+        return BookingResource::collection($booking->load(['apartment']))
+            ->additional([
+                    'status' => 200,
+                    'message' => 'Booking rated successfully.',
+                ])
+            ->response()
+            ->setStatusCode(200);
     }
 }
