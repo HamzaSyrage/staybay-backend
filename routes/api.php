@@ -33,7 +33,7 @@ Route::group(['prefix' => 'apartments', 'middleware' => 'auth:sanctum'], functio
 
 
     Route::get('/{apartment}', [ApartmentController::class, 'show']);
-
+    Route::get('/nonAvailableDates', [BookingController::class, 'apartmentNotAvailableIn']);
     Route::put('/{apartment}', [ApartmentController::class, 'update'])
         ->middleware('is_apartment_owner');
     Route::delete('/{apartment}', [ApartmentController::class, 'destroy'])
