@@ -34,6 +34,12 @@ class CanUserPayMiddleware
         if ($booking->paid_at !== null) {
             abort(422, 'Booking has already been paid.');
         }
+
+        $owner = $booking->apartment->user;
+        if (!$owner) {
+            abort(422, 'Apartment owner not found.');
+        }
+
         return $next($request);
     }
 }
