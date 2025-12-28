@@ -259,5 +259,14 @@ class ApartmentController extends Controller
         ]);
     }
 
+    public function notAvailableDates(Apartment $apartment, Request $request)
+    {
+
+        return response()->json([
+            'status' => 200,
+            'message' => $apartment->id . ' id Not Available Dates',
+            'data' => $apartment->notAvailableDates(),
+        ]);
+    }
 }
 

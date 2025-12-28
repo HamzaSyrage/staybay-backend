@@ -22,6 +22,7 @@ class Booking extends Model
         // 'paid_at',
         // 'paid_amount',
     ];
+    static public $penalty = 10;
     public function user()
     {
         return $this->belongsTo(User::class);

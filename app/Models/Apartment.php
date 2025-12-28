@@ -76,18 +76,72 @@ class Apartment extends Model
             ->count();
     }
 
-    public function isAvailable(Carbon $start, Carbon $end, ?int $BookingId = null): bool
+    public function isAvailable(Carbon $start, Carbon $end, ?int $ignoreBookingId = null): bool
     {
+        $start = $start->toDateString();
+        $end = $end->toDateString();
+
         return !$this->bookings()
-            ->when($BookingId, fn($q) => $q->where('id', '!=', $BookingId))
-            ->whereNotIn('status', ['rejected', 'cancelled'])
-            ->where(function ($query) use ($start, $end) {
-                $query->where('start_date', '<=', $end)
+            ->when($ignoreBookingId, fn($q) => $q->where('id', '!=', $ignoreBookingId))
+            ->whereIn('status', ['approved', 'started', 'completed', 'pending'])
+            // ->where('is_latest', true)
+            ->where(function ($q) use ($start, $end) {
+                $q->where('start_date', '<=', $end)
                     ->where('end_date', '>=', $start);
             })
             ->exists();
     }
 
+
+
+
+    public function notAvailableDates(): array
+    {
+        $dates = $this->bookings()
+            ->whereIn('status', ['approved', 'completed', 'pending', 'started'])
+            // ->where('is_latest', true)
+            ->where('end_date', '>=', Carbon::today())
+            ->get(['start_date', 'end_date'])
+            ->map(fn($b) => [
+                'start_date' => Carbon::parse($b->start_date),
+                'end_date' => Carbon::parse($b->end_date),
+            ])
+            ->sortBy('start_date')
+            ->values()
+            ->toArray();
+
+        if (empty($dates)) {
+            return [];
+        }
+
+        $merged = [];
+        $current = $dates[0];
+
+        foreach ($dates as $i => $date) {
+            if ($i === 0)
+                continue;
+
+
+            if ($date['start_date']->lte($current['end_date']->copy()->addDay())) {
+
+                $current['end_date'] = $date['end_date']->max($current['end_date']);
+            } else {
+
+                $merged[] = [
+                    'start_date' => $current['start_date']->toDateString(),
+                    'end_date' => $current['end_date']->toDateString(),
+                ];
+                $current = $date;
+            }
+        }
+
+        $merged[] = [
+            'start_date' => $current['start_date']->toDateString(),
+            'end_date' => $current['end_date']->toDateString(),
+        ];
+
+        return $merged;
+    }
 
 
     public function reCalculateRating(){

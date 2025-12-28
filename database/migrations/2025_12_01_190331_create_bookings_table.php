@@ -25,10 +25,15 @@ return new class extends Migration {
             $table->dateTime('rated_at')->nullable();
             // $table->boolean('is_paid')->default(false);
             // $table->dateTime('paid_at')->nullable();
-            $table->foreignId('prev_id')
-                ->nullable()
-                ->constrained('bookings')
-                ->nullOnDelete();
+
+            // $table->integer('version')->default(1);
+            // $table->boolean('is_latest')->default(true);
+
+            // $table->foreignId('prev_id')
+            // ->nullable()
+            // ->constrained('bookings')
+            // ->nullOnDelete();
+
             $table->timestamps();
         });
     }
