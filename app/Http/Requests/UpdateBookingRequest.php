@@ -13,7 +13,7 @@ class UpdateBookingRequest extends FormRequest
     {
         $booking = $this->route('booking');
         $notOkStatus = in_array($booking->status, [
-            'rejected', //? should we allow user to edit if rejected?
+            'rejected', //? should we allow user to edit if rejected? answer no
             'cancelled',
             'finished',
             'started',
@@ -30,8 +30,8 @@ class UpdateBookingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'start_date' => ['sometimes', 'date', 'before:end_date'],
-            'end_date' => ['sometimes', 'date', 'after:start_date'],
+            'start_date' => ['sometimes', 'date', 'after_or_equal:today'],
+            'end_date' => ['sometimes', 'date', 'after_or_equal:start_date'],
             'status' => ['sometimes', 'in:cancelled'],
         ];
     }

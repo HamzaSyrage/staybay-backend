@@ -130,27 +130,63 @@ class BookingController extends Controller
         $user = $request->user();
         $apartment = $booking->apartment;
 
-        // CANCEL BOOKING
         if (isset($validated['status']) && $validated['status'] === 'cancelled') {
-
             DB::transaction(function () use ($booking) {
                 $user = $booking->user;
                 $owner = $booking->apartment->user;
-
                 $totalPaid = $booking->payments()->where('status', 'hold')->sum('amount');
 
                 if ($totalPaid > 0) {
                     $penalty = round($totalPaid * (Booking::$penalty / 100), 2);
                     $refund = $totalPaid - $penalty;
 
-                    $booking->payments()->where('status', 'hold')->update([
+                    $booking->payments()->create([
+                        'amount' => -$totalPaid,
                         'status' => 'refunded',
                         'payment_date' => now(),
                     ]);
 
                     $user->hold_balance -= $totalPaid;
                     $owner->hold_balance -= $totalPaid;
+                    $user->balance += $refund;
+                    $owner->balance += $penalty;
 
+                    $user->save();
+                    $owner->save();
+                }
+                $booking->update(['status' => 'cancelled']);
+            });
+
+            return BookingResource::make($booking->fresh()->load(['apartment', 'payments']))->additional(['message' => 'Cancelled with penalty.']);
+        }
+
+        if (isset($validated['start_date'], $validated['end_date'])) {
+            $start = Carbon::parse($validated['start_date'])->startOfDay();
+            $end = Carbon::parse($validated['end_date'])->startOfDay();
+
+            if (!$apartment->isAvailable($start, $end, $booking->id)) {
+                throw ValidationException::withMessages(['dates' => 'Apartment not available for these dates.']);
+            }
+
+            $oldTotalPaid = $booking->payments()->where('status', 'hold')->sum('amount');
+            $newTotalPrice = ($start->diffInDays($end) + 1) * $apartment->price;
+
+            DB::transaction(function () use ($booking, $start, $end, $newTotalPrice, $oldTotalPaid, $user) {
+                $owner = $booking->apartment->user;
+
+                if ($oldTotalPaid > $newTotalPrice) {
+                    $diff = $oldTotalPaid - $newTotalPrice;
+                    $penalty = round($diff * (Booking::$penalty / 100), 2);
+                    $refund = $diff - $penalty;
+
+                    $booking->payments()->create([
+                        'amount' => -$diff,
+                        'status' => 'refunded',
+                        'payment_date' => now(),
+                    ]);
+
+                    $user->hold_balance -= $diff;
+                    $owner->hold_balance -= $diff;
                     $user->balance += $refund;
                     $owner->balance += $penalty;
 
@@ -159,87 +195,17 @@ class BookingController extends Controller
                 }
 
                 $booking->update([
-                    'status' => 'cancelled',
-                ]);
-            });
-
-            NotificationService::sendNotification(
-                $booking->user,
-                'Booking cancelled',
-                ['booking_id' => $booking->id, 'penalty' => Booking::$penalty . '%', 'type' => 'booking_cancelled']
-            );
-
-            return BookingResource::make($booking->fresh()->load(['apartment', 'payments']))
-                ->additional(['status' => 200, 'message' => 'Booking cancelled with penalty applied.'])
-                ->response();
-        }
-
-        // EDIT DATES
-        if (isset($validated['start_date'], $validated['end_date'])) {
-            $start = Carbon::parse($validated['start_date'])->startOfDay();
-            $end = Carbon::parse($validated['end_date'])->startOfDay();
-
-            if (!$apartment->isAvailable($start, $end, $booking->id)) {
-                throw ValidationException::withMessages([
-                    'dates' => 'The apartment is not available for the selected dates.',
-                ]);
-            }
-
-            $oldTotalPaid = $booking->payments()->whereIn('status', ['hold', 'completed'])->sum('amount');
-            $newTotalPrice = ($start->diffInDays($end) + 1) * $apartment->price;
-
-            DB::transaction(function () use ($booking, $start, $end, $newTotalPrice, $oldTotalPaid, $user) {
-
-                $booking->update([
-                    'status' => 'pending',
                     'start_date' => $start->toDateString(),
                     'end_date' => $end->toDateString(),
+                    'total_price' => $newTotalPrice,
+                    'status' => 'pending',
                 ]);
-
-                if ($oldTotalPaid > $newTotalPrice) {
-                    $priceDiff = $oldTotalPaid - $newTotalPrice;
-                    $penaltyAmount = round($priceDiff * (Booking::$penalty / 100), 2);
-                    $refund = $priceDiff - $penaltyAmount;
-
-                    $booking->payments()->whereIn('status', ['hold', 'completed'])->update([
-                        'status' => 'refunded',
-                        'payment_date' => now(),
-                    ]);
-
-                    $user->balance += $refund;
-                    $user->hold_balance -= $oldTotalPaid;
-                    $user->save();
-
-                    NotificationService::sendNotification(
-                        $user,
-                        "Booking updated: a refund of $refund was issued after a penalty of $penaltyAmount",
-                        ['booking_id' => $booking->id, 'type' => 'booking_refund']
-                    );
-
-                    $booking->update(['total_price' => $newTotalPrice]);
-
-                } elseif ($oldTotalPaid < $newTotalPrice) {
-                    $remainingToPay = $newTotalPrice - $oldTotalPaid;
-                    $booking->update(['total_price' => $remainingToPay]);
-
-                    NotificationService::sendNotification(
-                        $user,
-                        "Booking updated: you need to pay the remaining amount: " . $remainingToPay,
-                        ['booking_id' => $booking->id, 'type' => 'booking_pending_payment']
-                    );
-                }
             });
 
-
-            return BookingResource::make($booking->fresh()->load(['apartment', 'payments']))
-                ->additional(['status' => 200, 'message' => 'Booking dates updated successfully.'])
-                ->response();
+            return BookingResource::make($booking->fresh()->load(['apartment', 'payments']))->additional(['message' => 'Dates updated. Waiting for owner approval.']);
         }
 
-        return response()->json([
-            'status' => 422,
-            'message' => 'Nothing to update.',
-        ], 422);
+        return abort(422, 'nothing updated invalid request');
     }
 
 
@@ -248,44 +214,40 @@ class BookingController extends Controller
     {
         $validated = $request->validated();
         $owner = $request->user();
+        $user = $booking->user;
 
-        DB::transaction(function () use ($booking, $validated) {
+        DB::transaction(function () use ($booking, $validated, $user, $owner) {
 
-            $user = $booking->user;
-
-            // APPROVED
-            if ($validated['status'] === 'approved') {
-                $booking->update(['status' => 'approved']);
-                // Nothing TO DO USER CAN PAY NOW
-            }
-
-            // REJECTED
             if ($validated['status'] === 'rejected') {
-                $totalPaid = $booking->payments()->whereIn('status', ['hold', 'completed'])->sum('amount');
+                $totalHeld = $booking->payments()->where('status', 'hold')->sum('amount');
 
-                if ($totalPaid > 0) { // GIVE THE USER HIS MONEY BACK
-                    $booking->payments()->update([
+                if ($totalHeld > 0) {
+                    $booking->payments()->create([
+                        'amount' => -$totalHeld,
                         'status' => 'refunded',
                         'payment_date' => now(),
                     ]);
-                    $user->balance += $totalPaid;
-                    $user->hold_balance -= $totalPaid;
+
+                    $user->balance += $totalHeld;
+                    $user->hold_balance -= $totalHeld;
+                    $owner->hold_balance -= $totalHeld;
+
                     $user->save();
+                    $owner->save();
+                }
+                $booking->update(['status' => 'rejected']);
             }
 
-                $booking->update(['status' => 'rejected']);
+            if ($validated['status'] === 'approved') {
+                $totalPaid = $booking->payments()->where('status', 'hold')->sum('amount');
+
+                $newStatus = ($totalPaid >= $booking->total_price) ? 'completed' : 'approved';
+
+                $booking->update(['status' => $newStatus]);
         }
         });
 
-        NotificationService::sendNotification(
-            $booking->user,
-            "Your booking was " . $validated['status'],
-            ['booking_id' => $booking->id, 'apartment_id' => $booking->apartment_id, 'type' => 'booking_status_update']
-        );
-
-        return BookingResource::make($booking->fresh()->load(['apartment', 'payments']))
-            ->additional(['status' => 200, 'message' => 'Booking status updated successfully.'])
-            ->response();
+        return BookingResource::make($booking->fresh()->load(['apartment', 'payments']))->additional(['message' => 'Status updated.']);
     }
 
 
