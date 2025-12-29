@@ -144,9 +144,12 @@ class Apartment extends Model
     }
 
 
-    public function reCalculateRating(){
+    public function reCalculateRating()
+    {
         $query = $this->bookings()->whereNotNull('rating');
-        $this->rating = $query->avg('rating');
-        $this->rating_count = $query->count();
+        $avgRating = $query->avg('rating') ?? 0;
+        $this->rating = round($avgRating, 1);
+        // $this->rating_count = $query->count(); ? we dont have a rating count col we calc it in response only
+        $this->save();
     }
 }

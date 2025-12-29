@@ -23,6 +23,8 @@ return new class extends Migration {
             $table->text('description');
             $table->float('price');
             $table->float('rating')->default(0);
+            // $table->int('rating_count')->default(0);
+
             $table->integer('bathrooms');
             $table->integer('bedrooms');
             $table->integer('size');
