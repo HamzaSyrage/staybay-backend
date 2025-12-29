@@ -32,7 +32,21 @@ class BookingResource extends JsonResource
             'is_paid' => $isFullyPaid,
 
             'can_user_pay' => !$isFullyPaid && $this->status === 'approved',
-
+            'can_user_edit' => !in_array($this->status, [
+                'rejected',
+                'cancelled',
+                'finished',
+                'started',
+                'failed',
+            ]),
+            'can_owner_edit' => !in_array($this->status, [
+                'approved',
+                'rejected',
+                'cancelled',
+                'finished',
+                'started',
+                'failed',
+            ]),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

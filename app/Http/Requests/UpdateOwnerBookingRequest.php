@@ -13,6 +13,7 @@ class UpdateOwnerBookingRequest extends FormRequest
     {
         $booking = $this->route('booking');
         $notOkStatus = in_array($booking->status, [
+            'approved',
             'rejected',
             'cancelled',
             'finished',
