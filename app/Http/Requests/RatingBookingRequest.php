@@ -24,7 +24,7 @@ class RatingBookingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'rating' => ['required', 'float', 'between:0,5'],
+            'rating' => ['required', 'numeric', 'between:0,5'],
         ];
     }
 }
