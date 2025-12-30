@@ -188,12 +188,17 @@ class DatabaseSeeder extends Seeder
 
         Apartment::factory(20)->create([
             'user_id' => $users->random()->id,
-            // 'governorate_id' => $governorates->random()->id,
             'city_id' => $cities->random()->id,
         ])->each(function ($apartment) use ($users) {
 
-            ApartmentImage::factory(10)->create([
+            ApartmentImage::factory()->create([
                 'apartment_id' => $apartment->id,
+                'is_cover' => true,
+            ]);
+
+            ApartmentImage::factory(9)->create([
+                'apartment_id' => $apartment->id,
+                'is_cover' => false,
             ]);
 
             $apartment->favoriteUsers()->attach(
