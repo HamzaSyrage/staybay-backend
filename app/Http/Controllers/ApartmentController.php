@@ -220,24 +220,21 @@ class ApartmentController extends Controller
     public function update(UpdateApartmentRequest $request, Apartment $apartment)
     {
         DB::transaction(function () use ($request, $apartment) {
-        $validated = $request->validated();
-
-        $apartment->update($validated);
+            $validated = $request->validated();
+            $apartment->update($validated);
 
             $coverImage = $apartment->images()->where('is_cover', true)->first();
-            $otherImages = $apartment->images()->where('is_cover', false)->get();
 
-            $keepPaths = $validated['keep_images'] ?? $otherImages->pluck('path')->toArray();
-
-            $pathsToDelete = array_diff($otherImages->pluck('path')->toArray(), $keepPaths);
-            if (!empty($pathsToDelete)) {
-                $apartment->images()->whereIn('path', $pathsToDelete)->delete();
+            if (!empty($validated['delete_images'])) {
+                $apartment->images()
+                    ->where('is_cover', false)
+                    ->whereIn('path', $validated['delete_images'])
+                    ->delete();
         }
 
             if ($request->hasFile('new_images')) {
                 foreach ($request->file('new_images') as $image) {
-                $path = $image->store('apartments', 'public');
-
+                    $path = $image->store('apartments', 'public');
                 $apartment->images()->create([
                     'path' => 'storage/' . $path,
                         'is_cover' => false,
@@ -253,6 +250,7 @@ class ApartmentController extends Controller
                     'message' => 'Apartment updated successfully.',
                 ]);
     }
+
 
 
 
