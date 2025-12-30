@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\MiddleWares\UpdateBookingStatusesMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -27,6 +28,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'can_book_apartment' => CanBookApartmentMiddleware::class,
             'can_user_rate' => CanUserRateMiddleware::class,
             'can_user_pay' => CanUserPayMiddleware::class,
+
+            'update_booking_statuses' => UpdateBookingStatusesMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
