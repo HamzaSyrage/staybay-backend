@@ -2,7 +2,6 @@
 
 namespace App\Http\Middlewares;
 
-use App\Models\Apartment;
 use Closure;
 use Illuminate\Http\Request;
 

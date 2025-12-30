@@ -3,13 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCityRequest;
-use App\Models\City;
 use App\Models\Governorate;
-use App\Http\Requests\StoreGovernorateRequest;
 use App\Http\Requests\UpdateGovernorateRequest;
 use App\Http\Resources\CityResource;
 use App\Http\Resources\GovernorateResource;
-use PHPUnit\Framework\Constraint\Count;
 
 class GovernorateController extends Controller
 {
