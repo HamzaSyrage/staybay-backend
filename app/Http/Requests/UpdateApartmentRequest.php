@@ -36,8 +36,15 @@ class UpdateApartmentRequest extends FormRequest
             'has_wifi' => ['sometimes', 'boolean'],
 
             'cover_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp'],
-            'images' => ['nullable', 'array'],
-            'images.*' => ['image', 'mimes:jpg,jpeg,png,webp'],
+
+            // 'images' => ['nullable', 'array'],
+            // 'images.*' => ['image', 'mimes:jpg,jpeg,png,webp'],
+
+            'keep_images' => ['sometimes', 'array'],
+            'keep_images.*' => ['string'],
+
+            'new_images' => ['sometimes', 'array'],
+            'new_images.*' => ['file', 'image', 'mimes:jpg,jpeg,png,webp'],
         ];
     }
 }

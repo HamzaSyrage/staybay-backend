@@ -12,6 +12,7 @@ class ApartmentImage extends Model
 
     protected $fillable = [
         'apartment_id',
+        'is_cover',
         'path',
     ];
     public function apartment()

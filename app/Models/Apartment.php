@@ -67,7 +67,7 @@ class Apartment extends Model
     }
     public function cover_image()
     {
-        return $this->images()->first();
+        return $this->images()->where('is_cover', true)->first();
     }
     public function rating_count()
     {

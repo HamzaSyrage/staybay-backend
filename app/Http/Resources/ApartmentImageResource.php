@@ -18,6 +18,7 @@ class ApartmentImageResource extends JsonResource
         return [
             'id' => $this->id,
             // 'apartment_id' => $this->apartment_id,
+            'is_cover' => $this->is_cover,
             'path' => $this->path,
         ];
     }
