@@ -42,8 +42,10 @@ class UpdateApartmentRequest extends FormRequest
 
             // 'keep_images' => ['sometimes', 'array'],
             // 'keep_images.*' => ['string'],
+            // 'delete_images' => ['sometimes', 'array'],
+            // 'delete_images.*' => ['string'],
             'delete_images' => ['sometimes', 'array'],
-            'delete_images.*' => ['string'],
+            'delete_images.*' => ['integer', 'exists:apartment_images,id'],
 
             'new_images' => ['sometimes', 'array'],
             'new_images.*' => ['file', 'image', 'mimes:jpg,jpeg,png,webp'],

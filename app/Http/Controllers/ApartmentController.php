@@ -228,7 +228,7 @@ class ApartmentController extends Controller
             if (!empty($validated['delete_images'])) {
                 $apartment->images()
                     ->where('is_cover', false)
-                    ->whereIn('path', $validated['delete_images'])
+                    ->whereIn('id', $validated['delete_images'])
                     ->delete();
         }
 
