@@ -35,9 +35,10 @@ class BookingController extends Controller
             'payments'
         ])
             ->where('user_id', $request->user()->id)
-            ->whereNotIn('id', function ($query) {
-                $query->select('prev_id')->from('bookings')->whereNotNull('prev_id');
-            })->orderByDesc('created_at')
+            // ->whereNotIn('id', function ($query) {
+            //     $query->select('prev_id')->from('bookings')->whereNotNull('prev_id');
+            // })
+            ->orderByDesc('created_at')
             ->get();
 
         return BookingResource::collection($bookings)
@@ -58,9 +59,10 @@ class BookingController extends Controller
             'payments'
         ])
             ->whereHas('apartment', fn($query) => $query->where('user_id', $ownerId))
-            ->whereNotIn('id', function ($query) {
-                $query->select('prev_id')->from('bookings')->whereNotNull('prev_id');
-            })->orderByDesc('created_at')
+            // ->whereNotIn('id', function ($query) {
+            //     $query->select('prev_id')->from('bookings')->whereNotNull('prev_id');
+            // })
+            ->orderByDesc('created_at')
             ->get();
 
         return BookingResource::collection($bookings)
