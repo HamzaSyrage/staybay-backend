@@ -45,8 +45,8 @@ Route::group(['prefix' => 'apartments', 'middleware' => 'auth:sanctum'], functio
 Route::group(['prefix' => 'chat' , 'middleware' => 'auth:sanctum'], function () {
     Route::get('/', [ChatController::class, 'index']);
     Route::post('/send', [ChatController::class, 'send']);
-    Route::get('/{chat}', [ChatController::class, 'show']);
     Route::get('/show', [ChatController::class, 'showChat']);
+    Route::get('/{chat}', [ChatController::class, 'show']);
     Route::delete('/{chat}', [ChatController::class, 'destroy']);
 });
 Route::group(['prefix' => 'message' , 'middleware' => 'auth:sanctum'], function () {

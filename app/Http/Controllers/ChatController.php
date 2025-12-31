@@ -70,8 +70,11 @@ class ChatController extends Controller
     }
      public function showChat(Request $request){
         $sender = auth()->user();
-        $receiver_id = $request['receiver_id'];
-        abort_if(!isset($receiver_id),'recevier_id is required',400);
+        $validated = $request->validate([
+            'receiver_id' => 'integer|required',
+        ]);
+        $receiver_id = $validated['receiver_id'];
+        abort_if(!isset($receiver_id),'recevier_id is required',401);
         $chat = Chat::where(function ($q) use ($sender, $receiver_id) {
             $q->where('sender_id', $sender->id)
                 ->where('receiver_id', $receiver_id);
@@ -79,6 +82,7 @@ class ChatController extends Controller
             $q->where('sender_id', $receiver_id)
                 ->where('receiver_id', $sender->id);
         })->first();
+        dd($chat);
         if(!isset($chat)){
             $chat = Chat::create([
                 'sender_id'   => $sender->id,
