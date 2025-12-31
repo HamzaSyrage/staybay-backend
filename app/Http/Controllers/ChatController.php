@@ -40,9 +40,10 @@ class ChatController extends Controller
             'sender_id' => $sender->id,
         ]);
         $receiver = User::find($receiver_id);
-        NotificationService::sendNotification($sender, "user {$receiver->first_name} {$receiver->last_name} sent a message}",[
+        NotificationService::sendNotification($receiver, "{$sender->first_name} {$sender->last_name} sent you a message", [
             "sender_id"=>$sender->id,
         ]);
+
         return response()->json([
             'data' => $message,
             'message'=>'Message sent',
@@ -51,11 +52,15 @@ class ChatController extends Controller
     }
 
     /**
-     * @return Chat[]|\LaravelIdea\Helper\App\Models\_IH_Chat_C
      * incoming and outcoming chat
      */
     public function index(){
-        return Chat::where('sender_id',auth()->user()->id)->orWhere('receiver_id',auth()->user()->id)->get();
+        // return Chat::where('sender_id', auth('sanctum')->user()->id)->orWhere('receiver_id', auth('sanctum')->user()->id)->get();
+        return Chat::with('messages')
+            ->where('sender_id', auth('sanctum')->id())
+            ->orWhere('receiver_id', auth('sanctum')->id())
+            ->latest()
+            ->get();
     }
 
     /**
@@ -64,17 +69,17 @@ class ChatController extends Controller
      * show a chat
      */
     public function show(Chat $chat){
-        $user_id = auth()->user()->id;
+        $user_id = auth('sanctum')->user()->id;
         abort_if( $user_id !== $chat->receiver_id && $user_id !==$chat->sender_id, 403 ,"Unauthorized action.");
         return Chat::with('messages')->find($chat->id);
     }
      public function showChat(Request $request){
-        $sender = auth()->user();
+        $sender = auth('sanctum')->user();
         $validated = $request->validate([
             'receiver_id' => 'integer|required',
         ]);
         $receiver_id = $validated['receiver_id'];
-        abort_if(!isset($receiver_id),'recevier_id is required',401);
+        abort_if(!isset($receiver_id), 401, 'recevier_id is required', );
         $chat = Chat::where(function ($q) use ($sender, $receiver_id) {
             $q->where('sender_id', $sender->id)
                 ->where('receiver_id', $receiver_id);
@@ -82,14 +87,15 @@ class ChatController extends Controller
             $q->where('sender_id', $receiver_id)
                 ->where('receiver_id', $sender->id);
         })->first();
-        dd($chat);
+        // dd($chat);
         if(!isset($chat)){
             $chat = Chat::create([
                 'sender_id'   => $sender->id,
                 'receiver_id' => $receiver_id,
             ]);
         }
-        return Chat::with('messages')->find($chat->id);
+        // return Chat::with('messages')->find($chat->id);
+        return $chat->load('messages');
     }
 
     /**
@@ -98,7 +104,7 @@ class ChatController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(Chat $chat){
-        $user_id = auth()->user()->id;
+        $user_id = auth('sanctum')->user()->id;
         abort_if( $user_id !== $chat->receiver_id && $user_id !==$chat->sender_id, 403 ,"Unauthorized action.");
         $chat->delete();
         return response()->json([
