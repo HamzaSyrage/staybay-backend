@@ -2,8 +2,8 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Apartment;
 use Closure;
+use App\Models\Apartment;
 use Illuminate\Http\Request;
 
 class CanBookApartmentMiddleware
@@ -11,7 +11,6 @@ class CanBookApartmentMiddleware
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     public function handle(Request $request, Closure $next)
     {
