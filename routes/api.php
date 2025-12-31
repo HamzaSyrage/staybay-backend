@@ -46,7 +46,7 @@ Route::group(['prefix' => 'chat' , 'middleware' => 'auth:sanctum'], function () 
     Route::get('/', [ChatController::class, 'index']);
     Route::post('/send', [ChatController::class, 'send']);
     Route::get('/{chat}', [ChatController::class, 'show']);
-    Route::get('/chat', [ChatController::class, 'showChat']);
+    Route::get('/show', [ChatController::class, 'showChat']);
     Route::delete('/{chat}', [ChatController::class, 'destroy']);
 });
 Route::group(['prefix' => 'message' , 'middleware' => 'auth:sanctum'], function () {
