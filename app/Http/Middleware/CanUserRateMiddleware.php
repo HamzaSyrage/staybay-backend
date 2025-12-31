@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Middlewares;
+namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
 
-class CanUserPayMiddleware
+class CanUserRateMiddleware
 {
     /**
      * Handle an incoming request.
@@ -23,24 +23,17 @@ class CanUserPayMiddleware
         $user = $request->user();
 
         if ($booking->user_id !== $user->id) {
-            abort(403, 'You cannot pay this booking.');
+            abort(403, 'You cannot rate this booking.');
         }
 
-        if ($booking->status !== 'approved') {
-            abort(422, 'Booking must be approved to pay it.');
+        if ($booking->status !== 'finished') {
+            abort(422, 'Booking must be finished to rate it.');
         }
 
-        $holdAmount = $booking->payments->sum('amount');
-
-        if ($holdAmount >= $booking->total_price) {
-            abort(422, 'Booking is already fully paid.');
-        }
-
-        if (!$booking->apartment->user) {
-            abort(422, 'Apartment owner not found.');
-        }
+        // if ($booking->rated_at !== null) {
+        //     abort(422, 'Booking has already been rated.');
+        // }
 
         return $next($request);
     }
 }
-

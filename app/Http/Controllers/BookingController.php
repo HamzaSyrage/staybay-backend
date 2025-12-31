@@ -97,7 +97,7 @@ class BookingController extends Controller
 
             $totalPrice = ($start->diffInDays($end) + 1) * $apartment->price;
 
-            return $apartment->bookings()->create([
+        return $apartment->bookings()->create([
             'user_id' => $user->id,
                 'start_date' => $start->toDateString(),
                 'end_date' => $end->toDateString(),

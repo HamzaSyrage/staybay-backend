@@ -1,16 +1,16 @@
 <?php
 
-use App\Http\MiddleWares\UpdateBookingStatusesMiddleware;
+use App\Http\Middleware\UpdateBookingStatusesMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use App\Http\MiddleWares\AdminMiddleware;
-use App\Http\Middlewares\CanBookApartmentMiddleware;
-use App\Http\Middlewares\CanUserPayMiddleware;
-use App\Http\Middlewares\CanUserRateMiddleware;
-use App\Http\MiddleWares\VerifiedUserMiddleware;
-use App\Http\MiddleWares\CheckCredentialsMiddleware;
-use App\Http\MiddleWares\IsApartmentOwnerMiddleware;
+use App\Http\Middleware\AdminMiddleware;
+use App\Http\Middleware\CanBookApartmentMiddleware;
+use App\Http\Middleware\CanUserPayMiddleware;
+use App\Http\Middleware\CanUserRateMiddleware;
+use App\Http\Middleware\VerifiedUserMiddleware;
+use App\Http\Middleware\CheckCredentialsMiddleware;
+use App\Http\Middleware\IsApartmentOwnerMiddleware;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(

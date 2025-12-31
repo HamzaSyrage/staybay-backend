@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\MiddleWares;
+namespace App\Http\Middleware;
 
 use App\Services\BookingStatusService;
 use Closure;

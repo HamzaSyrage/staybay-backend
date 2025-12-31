@@ -68,6 +68,24 @@ class ChatController extends Controller
         abort_if( $user_id !== $chat->receiver_id && $user_id !==$chat->sender_id, 403 ,"Unauthorized action.");
         return Chat::with('messages')->find($chat->id);
     }
+     public function showChat(Request $request){
+        $sender = auth()->user();
+        $receiver_id = $request['receiver_id'];
+        $chat = Chat::where(function ($q) use ($sender, $receiver_id) {
+            $q->where('sender_id', $sender->id)
+                ->where('receiver_id', $receiver_id);
+        })->orWhere(function ($q) use ($sender, $receiver_id) {
+            $q->where('sender_id', $receiver_id)
+                ->where('receiver_id', $sender->id);
+        })->first();
+        if(!isset($chat)){
+            $chat = Chat::create([
+                'sender_id'   => $sender->id,
+                'receiver_id' => $receiver_id,
+            ]);
+        }
+        return Chat::with('messages')->find($chat->id);
+    }
 
     /**
      * delete all messages with the chat
