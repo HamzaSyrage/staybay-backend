@@ -40,8 +40,10 @@ class ChatController extends Controller
             'sender_id' => $sender->id,
         ]);
         $receiver = User::find($receiver_id);
-        NotificationService::sendNotification($sender, "user {$receiver->first_name} {$receiver->last_name} sent a message}",[
+        NotificationService::sendNotification($receiver, "user {$sender->first_name} {$sender->last_name} sent a message}",[
             "sender_id"=>$sender->id,
+            'receiever_id'=>$receiver_id,
+            'message'=> $message
         ]);
         return response()->json([
             'data' => $message,
