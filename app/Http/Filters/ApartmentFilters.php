@@ -21,8 +21,8 @@ class ApartmentFilters
         'has_wifi',
         'size_min',
         'size_max',
-        'ratting_min',
-        'ratting_max',
+        'rating_min',
+        'rating_max',
     ];
 
     public function __construct(Request $request)
@@ -103,12 +103,12 @@ class ApartmentFilters
         $this->builder->where('size', '<=', $value);
     }
 
-    public function ratting_min($value)
+    public function rating_min($value)
     {
         $this->builder->where('rating', '>=', $value);
     }
 
-    public function ratting_max($value)
+    public function rating_max($value)
     {
         $this->builder->where('rating', '<=', $value);
     }
