@@ -223,8 +223,20 @@ class ApartmentController extends Controller
             $validated = $request->validated();
             $apartment->update($validated);
 
-            $coverImage = $apartment->images()->where('is_cover', true)->first();
+            if ($request->hasFile('cover_image')) {
 
+                $apartment->images()
+                    ->where('is_cover', true)
+                    ->delete();
+
+                $path = $request->file('cover_image')
+                    ->store('apartments', 'public');
+
+                $apartment->images()->create([
+                    'path' => 'storage/' . $path,
+                    'is_cover' => true,
+                ]);
+            }
             if (!empty($validated['delete_images'])) {
                 $apartment->images()
                     ->where('is_cover', false)
