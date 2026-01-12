@@ -161,7 +161,7 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
             'first_name' => 'Normal',
             'last_name' => 'User',
-            'phone' => '9876543210',
+            'phone' => '0987654321',
             'password' => 'password',
             'is_admin' => false,
             'user_verified_at' => now(),
